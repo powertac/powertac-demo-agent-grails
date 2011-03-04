@@ -16,11 +16,6 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${tariffSpecificationInstance}">
-            <div class="errors">
-                <g:renderErrors bean="${tariffSpecificationInstance}" as="list" />
-            </div>
-            </g:hasErrors>
             <g:form action="publish" >
                 <div class="dialog">
                     <table>
