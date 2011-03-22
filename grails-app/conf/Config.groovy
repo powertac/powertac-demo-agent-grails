@@ -13,19 +13,19 @@
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
-grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
-                      xml: ['text/xml', 'application/xml'],
-                      text: 'text/plain',
-                      js: 'text/javascript',
-                      rss: 'application/rss+xml',
-                      atom: 'application/atom+xml',
-                      css: 'text/css',
-                      csv: 'text/csv',
-                      all: '*/*',
-                      json: ['application/json','text/json'],
-                      form: 'application/x-www-form-urlencoded',
-                      multipartForm: 'multipart/form-data'
-                    ]
+grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
+    xml: ['text/xml', 'application/xml'],
+    text: 'text/plain',
+    js: 'text/javascript',
+    rss: 'application/rss+xml',
+    atom: 'application/atom+xml',
+    css: 'text/css',
+    csv: 'text/csv',
+    all: '*/*',
+    json: ['application/json', 'text/json'],
+    form: 'application/x-www-form-urlencoded',
+    multipartForm: 'multipart/form-data'
+]
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
@@ -50,51 +50,61 @@ grails.spring.bean.packages = []
 
 // set per-environment serverURL stem for creating absolute links
 environments {
-    production {
-        grails.serverURL = "http://www.changeme.com"
-    }
-    development {
-        grails.serverURL = "http://localhost:8080/${appName}"
-    }
-    test {
-        grails.serverURL = "http://localhost:8080/${appName}"
-    }
+  production {
+    grails.serverURL = "http://www.powertac.org"
+  }
+  development {
+    grails.serverURL = "http://localhost:8080/${appName}"
+  }
+  test {
+    grails.serverURL = "http://localhost:8080/${appName}"
+  }
 
 }
 
 // log4j configuration
-log4j = {
-    appenders {
-        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    }
-	
-	root {
-		debug()
-	}
+log4j = { root ->
+  appenders {
+    console name: 'stdout', layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n")
+  }
+  warn 'org.codehaus.groovy.grails.web.servlet',  //  controllers
+      'org.codehaus.groovy.grails.web.pages', //  GSP
+      'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+      'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+      'org.codehaus.groovy.grails.web.mapping', // URL mapping
+      'org.codehaus.groovy.grails.commons', // core / classloading
+      'org.codehaus.groovy.grails.plugins', // plugins
+      'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+      'org.springframework',
+      'org.hibernate',
+      'org.activemq',
+      'grails.app'
 
-    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-           'org.codehaus.groovy.grails.web.pages', //  GSP
-           'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping', // URL mapping
-           'org.codehaus.groovy.grails.commons', // core / classloading
-           'org.codehaus.groovy.grails.plugins', // plugins
-           'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-           'org.springframework',
-           'org.hibernate',
-           'net.sf.ehcache.hibernate'
+  debug 'grails.app.service.org.powertac.broker.JmsManagementService'
 
-    warn   'org.mortbay.log'
+  root.level = org.apache.log4j.Level.INFO
 }
 
 // Added by the Joda-Time plugin:
 grails.gorm.default.mapping = {
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentDateTime, class: org.joda.time.DateTime
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentDuration, class: org.joda.time.Duration
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentInstant, class: org.joda.time.Instant
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentInterval, class: org.joda.time.Interval
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentLocalDate, class: org.joda.time.LocalDate
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentLocalTimeAsString, class: org.joda.time.LocalTime
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentLocalDateTime, class: org.joda.time.LocalDateTime
-	"user-type" type: org.joda.time.contrib.hibernate.PersistentPeriod, class: org.joda.time.Period
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentDateTime, class: org.joda.time.DateTime
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentDuration, class: org.joda.time.Duration
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentInstant, class: org.joda.time.Instant
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentInterval, class: org.joda.time.Interval
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentLocalDate, class: org.joda.time.LocalDate
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentLocalTimeAsString, class: org.joda.time.LocalTime
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentLocalDateTime, class: org.joda.time.LocalDateTime
+  "user-type" type: org.joda.time.contrib.hibernate.PersistentPeriod, class: org.joda.time.Period
+}
+
+powertac {
+  /* Broker login configuration */
+  username = 'defaultBroker'
+  apiKey = '5d064dd7-1ec9-4a98-bece-2ca09b03e364'
+
+  /* Local server - it may happen that you just want to test your broker without a running server. ActiveMQ
+         tries to connect to the server on startup and blocks the app unless it is connected.
+          startupMaxReconnectAttempts=1 reduces the reconnection attempts at startup
+  */
+  server = "failover:(tcp://localhost:61616)?startupMaxReconnectAttempts=1"
 }

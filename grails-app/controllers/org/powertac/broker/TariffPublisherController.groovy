@@ -5,8 +5,8 @@ import org.powertac.common.TariffSpecification;
 class TariffPublisherController {
 	def tariffPublishingService
 
-    def index = { 
-		render(view:'index')	
+    def index = {
+		render(view:'index')
 	}
 	
 	def publish = {
