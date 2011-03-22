@@ -1,3 +1,22 @@
-plugins/core/
-web-app/WEB-INF
-target
+# IntelliJ IDEA project files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Deployment directories
+target/
+activemq-data/
+
+# OS generated files
+.DS_Store?
+.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Compiled source
+*.class
+
+# Cobertura generated files
+cobertura.ser
