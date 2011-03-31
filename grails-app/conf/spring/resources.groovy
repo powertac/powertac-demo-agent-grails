@@ -10,10 +10,11 @@ beans = {
   jmsConnectionFactory(org.apache.activemq.pool.PooledConnectionFactory) {bean ->
     bean.destroyMethod = "stop"
     connectionFactory = {org.apache.activemq.ActiveMQConnectionFactory cf ->
-      clientID = user
-      brokerURL = brokerDestination
-      userName = user
-      password = pass
+      brokerURL = ''
+//      clientID = user
+//      brokerURL = brokerDestination
+//      userName = user
+//      password = pass
     }
   }
 }
