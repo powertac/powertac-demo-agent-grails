@@ -29,7 +29,7 @@ class ConnectionController {
     try {
       restClient = new RESTClient(params.server)
     } catch (Exception e) {
-      flash.message = "Invalid Server URL: ${e}"
+      flash.message = "Invalid Server URL: ${e.getMessage()}"
       redirect action: index
       return
     }
@@ -42,8 +42,9 @@ class ConnectionController {
 //      log.error "status ${loginResponse.status}"
 //      log.error "data ${loginResponse.data}"    // XML
     } catch (Exception e) {
-      log.warn "POSTing to server threw $e ${e.printStackTrace()}"
-
+      flash.message = "Could not connect to server: ${e.getMessage()}"
+      redirect action: index
+      return
     }
 
 //    jmsConnectionFactory.connectionFactory.brokerURL =  params?.server
