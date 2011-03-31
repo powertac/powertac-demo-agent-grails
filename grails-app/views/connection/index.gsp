@@ -29,7 +29,7 @@
       </tr>
       <tr>
         <td>API Key:</td>
-        <td><input type="text" name="apikey" value="${apiKey}" size="75"/></td>
+        <td><input type="text" name="apiKey" value="${apiKey}" size="75"/></td>
       </tr>
       <tr>
         <td/>

@@ -38,5 +38,9 @@ grails.project.dependency.resolution = {
     compile('org.apache.activemq:activemq-pool:5.4.2') {
       excludes 'commons-collections', 'commons-pool', 'commons-logging', 'junit', 'log4j', 'spring-context', 'spring-parent', 'spring-aop', 'spring-asm', 'spring-beans', 'spring-expression', 'xalan', 'xml-apis'
     }
+
+    runtime('org.codehaus.groovy.modules.http-builder:http-builder:0.5.1') {
+      excludes 'groovy', 'xml-apis'
+    }
   }
 }
