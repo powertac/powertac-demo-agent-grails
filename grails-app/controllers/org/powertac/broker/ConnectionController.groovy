@@ -15,7 +15,7 @@ class ConnectionController {
 
   def index = {
     if (jmsConnectionFactory.connectionFactory.brokerURL) {
-      flash.message = "Already connectedto ${jmsConnectionFactory.connectionFactory.brokerURL}, redirecting to status page"
+      flash.message = "Already connected to ${jmsConnectionFactory.connectionFactory.brokerURL}, redirecting to status page"
       redirect controller: 'status'
       return
     }
@@ -67,9 +67,9 @@ class ConnectionController {
         case StatusCode.OK:
 
           // Generate broker URL and set it. Connection will be established automatically.
-          jmsConnectionFactory.connectionFactory.brokerURL = "failover:(${loginResponseCmd.serverAddress})"
+          jmsConnectionFactory.connectionFactory.brokerURL = loginResponseCmd.serverAddress
 
-          flash.message = "Connected to ${loginResponseCmd.serverAddress}."
+          flash.message = "Sucessfully connected to ${loginResponseCmd.serverAddress}."
           redirect controller: 'status'
           break;
         case StatusCode.OK_BUSY:
