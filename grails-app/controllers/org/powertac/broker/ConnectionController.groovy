@@ -1,20 +1,22 @@
 package org.powertac.broker
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import groovyx.net.http.RESTClient
-import org.powertac.common.command.LoginRequestCmd
 import grails.converters.XML
 import groovyx.net.http.ContentType
+import groovyx.net.http.RESTClient
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.powertac.common.command.LoginRequestCmd
+import org.powertac.common.command.LoginResponseCmd
+import org.powertac.common.command.LoginResponseCmd.StatusCode
+import org.powertac.common.Tariff.State
 
 class ConnectionController {
 
   def jmsConnectionFactory
-  def connected = false
 
   def index = {
-    if (connected) {
-      flash.message = "Already connected, redirecting to status page"
-      redirect controller:'status'
+    if (jmsConnectionFactory.connectionFactory.brokerURL) {
+      flash.message = "Already connectedto ${jmsConnectionFactory.connectionFactory.brokerURL}, redirecting to status page"
+      redirect controller: 'status'
       return
     }
 
@@ -45,18 +47,52 @@ class ConnectionController {
     try {
       def loginRequestCmd = new LoginRequestCmd(username: params.username, apiKey: params.apiKey) as XML
       def loginRequest = loginRequestCmd.toString()
-      def loginResponse = restClient.post(path:"api/login", body:loginRequest, requestContentType: ContentType.XML)
-//      log.error "status ${loginResponse.status}"
-//      log.error "data ${loginResponse.data}"    // XML
+      def loginResponse = restClient.post(path: "api/login", body: loginRequest, requestContentType: ContentType.XML)
+
+      if (loginResponse.status != 200) { // HTTP OK
+        flash.message = "Server did not accept request. Status code: ${loginResponse.status}"
+        redirect action: index
+        return
+      }
+
+      //obsolte but maybe useful
+      //.data returns GPathResult, which is very handy in general but we need the raw string here
+      //def rawXMLString = XmlUtil.serialize(loginResponse.data);
+
+      def loginResponseXml = loginResponse.data
+      def loginResponseCmd = new LoginResponseCmd(status: loginResponseXml.status.text() as StatusCode,
+          serverAddress: loginResponseXml.serverAddress)
+
+      switch (loginResponseCmd.status) {
+        case StatusCode.OK:
+
+          // Generate broker URL and set it. Connection will be established automatically.
+          jmsConnectionFactory.connectionFactory.brokerURL = "failover:(${loginResponseCmd.serverAddress})"
+
+          flash.message = "Connected to ${loginResponseCmd.serverAddress}."
+          redirect controller: 'status'
+          break;
+        case StatusCode.OK_BUSY:
+          flash.message = "Login successful but server is busy right now. Please try again later."
+          redirect action: index
+          break;
+        case StatusCode.ERR_USERNAME_NOT_FOUND:
+          flash.message = "Username not found."
+          redirect action: index
+          break;
+        case StatusCode.ERR_INVALID_APIKEY:
+          flash.message = "Invalid API key."
+          redirect action: index
+          break;
+        default:
+          flash.message = "Invalid status code: ${loginResponseCmd.status}"
+          redirect action: index
+          break;
+      }
     } catch (Exception e) {
       flash.message = "Could not connect to server: ${e.getMessage()}"
+      log.error "${e.printStackTrace()}"
       redirect action: index
-      return
     }
-
-//    jmsConnectionFactory.connectionFactory.brokerURL =  params?.server
-
-    flash.message = "Connected."
-    redirect action: index
   }
 }
