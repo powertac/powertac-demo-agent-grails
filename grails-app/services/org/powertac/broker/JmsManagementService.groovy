@@ -10,7 +10,6 @@ class JmsManagementService {
   static exposes = ["jms"]
 
   def jmsService
-  def jmsConnectionFactory
 
   /**
    * The default queue name
@@ -26,7 +25,6 @@ class JmsManagementService {
   def send(message) {
     def xml = message as XML
     log.info "Sending ${message} as ${xml}"
-    jmsConnectionFactory.connectionFactory.brokerURL =  ConfigurationHolder.config.powertac.server
     jmsService.send("server.inputQueue", xml.toString())
   }
 }
