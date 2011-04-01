@@ -9,8 +9,15 @@ import groovyx.net.http.ContentType
 class ConnectionController {
 
   def jmsConnectionFactory
+  def connected = false
 
   def index = {
+    if (connected) {
+      flash.message = "Already connected, redirecting to status page"
+      redirect controller:'status'
+      return
+    }
+
     [server: "http://localhost:8080/powertac-server/",
         username: ConfigurationHolder.config.powertac.username,
         apiKey: ConfigurationHolder.config.powertac.apiKey]
