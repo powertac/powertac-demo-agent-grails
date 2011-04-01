@@ -35,7 +35,7 @@
                                     <label for="expiration"><g:message code="tariffSpecification.expiration.label" default="Expiration" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: tariffSpecificationInstance, field: 'expiration', 'errors')}">
-                                    
+                                    <joda:dateTimePicker name="expiration" value="${tariffSpecificationInstance?.expiration}" noSelection="['':'']"></joda:dateTimePicker>
                                 </td>
                             </tr>
                         
@@ -86,30 +86,7 @@
                         
                         </tbody>
                     </table>
-                </div>
-                <div class="dialog">
-                    <table>
-                        <tbody>                       
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="providerUrl"><g:message code="jms.providerUrl.label" default="Provider URL" /></label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean: jms, field: 'providerUrl', 'errors')}">
-                                    <g:textField name="providerUrl" value="${jms?.providerUrl}" />
-                                </td>
-                            </tr>
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="destinationName"><g:message code="jms.destinationName" default="Destination Name" /></label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean: jms, field: 'destinationName', 'errors')}">
-                                    <g:textField name="destinationName" value="${jms?.destinationName}" />
-                                </td>
-                            </tr>
-             			</tbody>
-             		</table>   
-                </div> 
-                
+                </div>                
                 <div class="buttons">
                     <span class="button"><g:submitButton name="publish" class="save" value="${message(code: 'default.button.publish.label', default: 'Publish')}" /></span>
                 </div>

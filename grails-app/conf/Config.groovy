@@ -81,6 +81,7 @@ log4j = { root ->
       'grails.app'
 
   debug 'grails.app.service.org.powertac.broker.JmsManagementService'
+  debug 'grails.app.controller.org.powertac.broker'
 
   root.level = org.apache.log4j.Level.INFO
 }
