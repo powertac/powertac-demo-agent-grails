@@ -3,20 +3,26 @@ package org.powertac.broker
 import grails.plugin.jms.Queue
 import grails.converters.XML
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.springframework.jms.listener.DefaultMessageListenerContainer
+import javax.jms.MessageListener
+
 
 class JmsManagementService {
 
   static transactional = true
   static exposes = ["jms"]
 
+  def jmsConnectionFactory
   def jmsService
 
-  /**
-   * The default queue name
-   */
-  @Queue(name = "brokers.defaultBroker.outputQueue")
-  def receive(message) {
-    log.info "Received from server: ${message}"
+  def registerBrokerMessageListener(String username, MessageListener listener) {
+    log.info("creating listener container for ${username}")
+    DefaultMessageListenerContainer container = new DefaultMessageListenerContainer()
+    container.setConnectionFactory(jmsConnectionFactory)
+    container.setDestinationName("brokers.${username}.outputQueue")
+    container.setMessageListener(listener)
+    container.afterPropertiesSet()
+    container.start()
   }
 
   /**

@@ -12,6 +12,7 @@ import org.powertac.common.Tariff.State
 class ConnectionController {
 
   def jmsConnectionFactory
+  def jmsManagementService
 
   def index = {
     if (jmsConnectionFactory.connectionFactory.brokerURL) {
@@ -46,6 +47,11 @@ class ConnectionController {
     // Connect to server
     try {
       def loginRequestCmd = new LoginRequestCmd(username: params.username, apiKey: params.apiKey) as XML
+
+      // reestablish username and apiKey
+      ConfigurationHolder.config.powertac.username = params.username
+      ConfigurationHolder.config.powertac.apiKey = params.apiKey
+
       def loginRequest = loginRequestCmd.toString()
       def loginResponse = restClient.post(path: "api/login", body: loginRequest, requestContentType: ContentType.XML)
 
@@ -68,6 +74,7 @@ class ConnectionController {
 
           // Generate broker URL and set it. Connection will be established automatically.
           jmsConnectionFactory.connectionFactory.brokerURL = loginResponseCmd.serverAddress
+          jmsManagementService.registerBrokerMessageListener(params.username, new ServerMessageListener())
 
           flash.message = "Sucessfully connected to ${loginResponseCmd.serverAddress}."
           redirect controller: 'status'
