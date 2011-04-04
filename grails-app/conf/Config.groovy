@@ -100,8 +100,8 @@ grails.gorm.default.mapping = {
 
 powertac {
   /* Broker login configuration */
-  username = 'demoBroker'
-  apiKey = '5d064dd7-1ec9-4a98-bece-2ca09b03e364'
+  username = 'grailsDemo'
+  apiKey = '5d064dd7-1ec9-4a98-bece-2ca09b03e367'
 
   /* Local server - it may happen that you just want to test your broker without a running server. ActiveMQ
          tries to connect to the server on startup and blocks the app unless it is connected.
