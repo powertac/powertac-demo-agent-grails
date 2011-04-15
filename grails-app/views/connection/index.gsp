@@ -28,8 +28,8 @@
         <td><input type="text" name="username" value="${username}" size="75"/></td>
       </tr>
       <tr>
-        <td>API Key:</td>
-        <td><input type="text" name="apiKey" value="${apiKey}" size="75"/></td>
+        <td>Password:</td>
+        <td><input type="password" name="password" value="${password}" size="75"/></td>
       </tr>
       <tr>
         <td/>

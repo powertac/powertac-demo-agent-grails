@@ -28,7 +28,7 @@ class ConnectionController {
 
   def connect = {
     // Verify that server, username and api key are not null
-    if (!params?.server || !params?.username || !params.apiKey) {
+    if (!params?.server || !params?.username) {
       flash.message = "No server, username and/or apiKey specified!"
       redirect action: index
       return
@@ -46,7 +46,7 @@ class ConnectionController {
 
     // Connect to server
     try {
-      def loginRequestCmd = new LoginRequestCmd(username: params.username, apiKey: params.apiKey) as XML
+      def loginRequestCmd = new LoginRequestCmd(username: params.username, password: params.password) as XML
 
       // reestablish username and apiKey
       ConfigurationHolder.config.powertac.username = params.username
