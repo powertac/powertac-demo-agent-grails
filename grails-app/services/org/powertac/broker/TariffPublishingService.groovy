@@ -9,7 +9,7 @@ class TariffPublishingService {
 
   def jmsManagementService
 
-  def publish(TariffSpecification ts, String brokerURL, String destinationName) {
+  def publish(TariffSpecification ts) {
     jmsManagementService.send(ts)
   }
 }

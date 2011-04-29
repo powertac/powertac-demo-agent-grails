@@ -1,20 +1,20 @@
-import org.springframework.jms.connection.SingleConnectionFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.springframework.jms.listener.adapter.MessageListenerAdapter
-
-String brokerDestination = ConfigurationHolder.config.powertac.server
-String user = ConfigurationHolder.config.powertac.username
-String pass = ConfigurationHolder.config.powertac.apiKey
-
 beans = {
   jmsConnectionFactory(org.apache.activemq.pool.PooledConnectionFactory) {bean ->
     bean.destroyMethod = "stop"
     connectionFactory = {org.apache.activemq.ActiveMQConnectionFactory cf ->
       brokerURL = ''
-//      clientID = user
-//      brokerURL = brokerDestination
-//      userName = user
-//      password = pass
     }
+  }
+
+  messageConverter(org.powertac.broker.infrastructure.messaging.MessageConverter) { bean ->
+    bean.initMethod = 'afterPropertiesSet'
+  }
+  messageListenerRegistrar(org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar) {}
+  xmlMessageReceiver(org.powertac.broker.infrastructure.messaging.XMLMessageReceiver) {
+    messageListenerRegistrar = messageListenerRegistrar
+    messageConverter = messageConverter
+  }
+  messageReceiver(org.powertac.broker.infrastructure.messaging.MessageReceiver) {
+    xmlMessageReceiver = xmlMessageReceiver
   }
 }

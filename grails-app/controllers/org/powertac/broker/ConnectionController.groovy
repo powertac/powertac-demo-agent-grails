@@ -8,11 +8,14 @@ import org.powertac.common.command.LoginRequestCmd
 import org.powertac.common.command.LoginResponseCmd
 import org.powertac.common.command.LoginResponseCmd.StatusCode
 import org.powertac.common.Tariff.State
+import org.powertac.broker.infrastructure.messaging.MessageReceiver
 
 class ConnectionController {
 
   def jmsConnectionFactory
   def jmsManagementService
+
+  MessageReceiver messageReceiver
 
   def index = {
     if (jmsConnectionFactory.connectionFactory.brokerURL) {
@@ -74,7 +77,7 @@ class ConnectionController {
 
           // Generate broker URL and set it. Connection will be established automatically.
           jmsConnectionFactory.connectionFactory.brokerURL = loginResponseCmd.serverAddress
-          jmsManagementService.registerBrokerMessageListener(params.username, new ServerMessageListener())
+          jmsManagementService.registerBrokerMessageListener(loginResponseCmd.queueName, messageReceiver)
 
           flash.message = "Sucessfully connected to ${loginResponseCmd.serverAddress}."
           redirect controller: 'status'

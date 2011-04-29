@@ -1,25 +1,23 @@
 package org.powertac.broker
 
-import grails.plugin.jms.Queue
-import grails.converters.XML
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.springframework.jms.listener.DefaultMessageListenerContainer
 import javax.jms.MessageListener
-
+import org.powertac.broker.infrastructure.messaging.MessageConverter
+import org.springframework.jms.listener.DefaultMessageListenerContainer
+import grails.converters.XML
 
 class JmsManagementService {
 
   static transactional = true
-  static exposes = ["jms"]
-
   def jmsConnectionFactory
   def jmsService
 
-  def registerBrokerMessageListener(String username, MessageListener listener) {
-    log.info("creating listener container for ${username}")
+  MessageConverter messageConverter
+
+  def registerBrokerMessageListener(String destinationName, MessageListener listener) {
+    log.info("creating listener container for ${destinationName}")
     DefaultMessageListenerContainer container = new DefaultMessageListenerContainer()
     container.setConnectionFactory(jmsConnectionFactory)
-    container.setDestinationName("brokers.${username}.outputQueue")
+    container.setDestinationName(destinationName)
     container.setMessageListener(listener)
     container.afterPropertiesSet()
     container.start()
@@ -29,8 +27,26 @@ class JmsManagementService {
    * Sends an object to the server. The objects automatically gets converted to a XML document.
    */
   def send(message) {
-    def xml = message as XML
-    log.info "Sending ${message} as ${xml}"
-    jmsService.send("server.inputQueue", xml.toString())
+    log.debug("sending message ${message.class.name}")
+
+    message.rates.each { log.debug("trying to convert rate: \n${messageConverter.toXML(it)}") }
+    def grailsConverterXML = message as XML
+    log.debug("trying to convert with grails:\n${grailsConverterXML}")
+
+    log.debug("value of broker is ${message.broker}")
+    def brokerXML = "null"
+    if (message.broker != null) {
+      log.debug("how did i get in here???? ${message.broker}:${message.broker != null}")
+      brokerXML = messageConverter.toXML(message.broker)
+    } else {
+      log.debug("yessss, broker is null")
+    }
+
+    log.debug("trying to convert brokers:\n${brokerXML}")
+
+    def xml = messageConverter.toXML(message)
+
+    log.debug("convert to xml: \n${xml}")
+    jmsService.send("server.inputQueue", messageConverter.toXML(message))
   }
 }
