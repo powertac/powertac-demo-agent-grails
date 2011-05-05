@@ -63,9 +63,14 @@ environments {
 }
 
 // log4j configuration
-log4j = { root ->
+log4j = {
   appenders {
-    console name: 'stdout', layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n")
+    console name: 'stdout',
+//        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
+        threshold: org.apache.log4j.Level.INFO
+    file name: 'file', file: 'logs/powertac-broker.log',
+//        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
+        threshold: org.apache.log4j.Level.DEBUG
   }
   warn 'org.codehaus.groovy.grails.web.servlet',  //  controllers
       'org.codehaus.groovy.grails.web.pages', //  GSP
@@ -78,12 +83,16 @@ log4j = { root ->
       'org.springframework',
       'org.hibernate',
       'org.activemq',
+      'org.apache',
       'grails.app'
 
-  debug 'grails.app.service.org.powertac.broker.JmsManagementService'
-  debug 'grails.app.controller.org.powertac.broker'
+  debug 'grails.app.service'
+  debug 'grails.app.controller'
+  debug 'org.powertac.broker'
 
-  root.level = org.apache.log4j.Level.INFO
+  root {
+    debug 'stdout', 'file'
+  }
 }
 
 // Added by the Joda-Time plugin:

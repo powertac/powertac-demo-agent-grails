@@ -6,7 +6,7 @@ beans = {
     }
   }
 
-  messageConverter(org.powertac.broker.infrastructure.messaging.MessageConverter) { bean ->
+  messageConverter(org.powertac.common.MessageConverter) { bean ->
     bean.initMethod = 'afterPropertiesSet'
   }
   messageListenerRegistrar(org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar) {}

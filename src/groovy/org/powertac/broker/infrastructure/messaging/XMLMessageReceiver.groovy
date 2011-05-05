@@ -16,12 +16,24 @@
 
 package org.powertac.broker.infrastructure.messaging
 
+import org.apache.commons.logging.LogFactory
+import org.powertac.common.MessageConverter
+
 class XMLMessageReceiver {
+  private static final log = LogFactory.getLog(this)
+
   MessageListenerRegistrar messageListenerRegistrar
   MessageConverter messageConverter
+
   def onMessage(String xml) {
+    log.debug("XMLMessageReceiver.onMessage(String) - received\n${xml}")
+
     def obj = messageConverter.fromXML(xml)
     def listeners = messageListenerRegistrar.getRegistrations(obj.class)
-    listeners?.each { it.receive(obj) }
+
+    log.debug("XMLMessageReceiver - received ${obj.class.name}")
+    log.debug("XMLMessageReceiver - dipatching to ${listeners?.size()} listeners")
+
+    listeners?.each { it.onMessage(obj) }
   }
 }
