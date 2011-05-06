@@ -17,4 +17,14 @@ beans = {
   messageReceiver(org.powertac.broker.infrastructure.messaging.MessageReceiver) {
     xmlMessageReceiver = xmlMessageReceiver
   }
+
+  arrayListProcessor(org.powertac.broker.infrastructure.messaging.ArrayListProcessor) { bean ->
+    bean.initMethod = 'initialize'
+    messageListenerRegistrar = messageListenerRegistrar
+  }
+
+  tariffNegotiator(org.powertac.broker.core.tariffnegotiator.DemoTariffNegotiator) { bean ->
+    bean.initMethod = 'initialize'
+    messageListenerRegistrar = messageListenerRegistrar
+  }
 }

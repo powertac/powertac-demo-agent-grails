@@ -18,9 +18,10 @@ package org.powertac.broker
 
 import org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar
 import org.powertac.broker.interfaces.MessageListener
-import org.powertac.common.Competition
-import org.powertac.common.msg.SimStart
 import org.powertac.common.Broker
+import org.powertac.common.Competition
+import org.powertac.common.Timeslot
+import org.powertac.common.msg.SimStart
 
 class CompetitionManagementService implements MessageListener
 {
@@ -39,9 +40,9 @@ class CompetitionManagementService implements MessageListener
     jmsConnectionFactory.connectionFactory.brokerURL = loginResponseCmd.serverAddress
     jmsManagementService.registerBrokerMessageListener(loginResponseCmd.queueName, messageReceiver)
 
-
     messageListenerRegistrar.register(Competition, this)
     messageListenerRegistrar.register(SimStart, this)
+    messageListenerRegistrar.register(Timeslot, this)
 
   }
 
@@ -54,10 +55,8 @@ class CompetitionManagementService implements MessageListener
 
   def onMessage (SimStart simStart)
   {
-    if (log.isDebugEnabled()) {
-      log.debug("onMessage(SimStart) - start")
-      log.debug("Saving simStart - start @ ${simStart.start}")
-    }
+    log.debug("onMessage(SimStart) - start")
+    log.debug("Saving simStart - start @ ${simStart.start}")
 
     simStart.brokers?.each {
       log.debug("Populate broker: ${it}")
@@ -66,8 +65,18 @@ class CompetitionManagementService implements MessageListener
     }
 
 
-    if (log.isDebugEnabled()) {
-      log.debug("onMessage(SimStart) - end")
-    }
+    log.debug("onMessage(SimStart) - end")
+  }
+
+
+  def onMessage (Timeslot slot)
+  {
+    log.debug("onMessage(Timeslot) - start")
+
+    slot.save()
+    log.debug("slot #${slot.serialNumber}, start@${slot.startInstant}, end@${slot.endInstant}")
+
+
+    log.debug("onMessage(Timeslot) - end")
   }
 }

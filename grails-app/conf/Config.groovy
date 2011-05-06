@@ -66,10 +66,12 @@ environments {
 log4j = {
   appenders {
     console name: 'stdout',
-//        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
+        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
         threshold: org.apache.log4j.Level.INFO
     file name: 'file', file: 'logs/powertac-broker.log',
-//        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
+        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
+        threshold: org.apache.log4j.Level.DEBUG
+    file name: 'incoming_message', file: 'logs/powertac-incoming-messages.log',
         threshold: org.apache.log4j.Level.DEBUG
   }
   warn 'org.codehaus.groovy.grails.web.servlet',  //  controllers
@@ -89,6 +91,8 @@ log4j = {
   debug 'grails.app.service'
   debug 'grails.app.controller'
   debug 'org.powertac.broker'
+
+  debug 'incoming_message' : 'org.powertac.broker.infrastructure.messaging.XMLMessageReceiver'
 
   root {
     debug 'stdout', 'file'

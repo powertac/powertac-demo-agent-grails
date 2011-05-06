@@ -31,24 +31,9 @@ class JmsManagementService {
   def send(message) {
     log.debug("sending message ${message.class.name}")
 
-    message.rates.each { log.debug("trying to convert rate: \n${messageConverter.toXML(it)}") }
-    def grailsConverterXML = message as XML
-    log.debug("trying to convert with grails:\n${grailsConverterXML}")
-
-    log.debug("value of broker is ${message.broker}")
-    def brokerXML = "null"
-    if (message.broker != null) {
-      log.debug("how did i get in here???? ${message.broker}:${message.broker != null}")
-      brokerXML = messageConverter.toXML(message.broker)
-    } else {
-      log.debug("yessss, broker is null")
-    }
-
-    log.debug("trying to convert brokers:\n${brokerXML}")
-
     def xml = messageConverter.toXML(message)
-
     log.debug("convert to xml: \n${xml}")
+
     jmsService.send("server.inputQueue", messageConverter.toXML(message))
   }
 }
