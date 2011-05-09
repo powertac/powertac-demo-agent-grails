@@ -1,1 +1,34 @@
 A grails (grails.org) based demo agent for the PowerTAC competiton.
+
+#### Communication with server
+Agent makes web service (WS) call to authenticate with the server using username and password.  The WS call will response
+with URL to JMS server and agent's JMS destination name (queue name).  After login, communication between server and agent
+is over JMS messages.
+
+Communication is abstracted via JmsManagementService. JmsManagementService provides message listener registration mechanism
+for receving messages, sending mechanism for sending messages.
+
+See sample implementation @ /grails-app/services/org/powertac/broker/CompetitionManagementService.groovy
+
+
+### Structure
+Each component of an agent is wired up using Spring allow easy replacement of different implementation in resource file.
+
+See @ /grails-app/conf/spring/resources.groovy
+
+### Running broker in developement mode
+# Note: currently, all dependency modules have to be checkout as sub-directory under one directory.
+
+1) Start an instance of the server
+% cd powertac-server
+% grails run-app
+
+2) Start an instance of the agent (specify server.port so it would not conflict with server if server is running on the
+same machine)
+% cd powertac-demo-agent-grails
+% grails -Dserver.port=9090 run-app
+
+3) Browse to http://localhost:9090/powertac-demo-agent-grails and perform login for agent to server
+
+4) Browse to http://localhost:8080/powertac-server to get to server web dashbard to perform server function (ie. start
+competition)

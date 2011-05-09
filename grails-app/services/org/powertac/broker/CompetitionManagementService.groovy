@@ -30,9 +30,6 @@ class CompetitionManagementService implements MessageListener
   def jmsConnectionFactory
   def jmsManagementService
   def messageReceiver
-  def dataManagementService
-
-  MessageListenerRegistrar messageListenerRegistrar
 
   def initialize (loginResponseCmd)
   {
@@ -40,9 +37,9 @@ class CompetitionManagementService implements MessageListener
     jmsConnectionFactory.connectionFactory.brokerURL = loginResponseCmd.serverAddress
     jmsManagementService.registerBrokerMessageListener(loginResponseCmd.queueName, messageReceiver)
 
-    messageListenerRegistrar.register(Competition, this)
-    messageListenerRegistrar.register(SimStart, this)
-    messageListenerRegistrar.register(Timeslot, this)
+    jmsManagementService.register(Competition, this)
+    jmsManagementService.register(SimStart, this)
+    jmsManagementService.register(Timeslot, this)
 
   }
 
