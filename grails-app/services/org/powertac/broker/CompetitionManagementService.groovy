@@ -22,6 +22,7 @@ import org.powertac.common.Broker
 import org.powertac.common.Competition
 import org.powertac.common.Timeslot
 import org.powertac.common.msg.SimStart
+import org.powertac.common.msg.TimeslotUpdate
 
 class CompetitionManagementService implements MessageListener
 {
@@ -39,15 +40,16 @@ class CompetitionManagementService implements MessageListener
 
     jmsManagementService.register(Competition, this)
     jmsManagementService.register(SimStart, this)
-    jmsManagementService.register(Timeslot, this)
+    jmsManagementService.register(TimeslotUpdate, this)
 
   }
 
 
   def onMessage (Competition competition)
   {
-    log.debug("Saving competition ${competition.id}")
-    competition.save()
+    log.debug("onMessage(Competition) - start")
+    log.debug("onMessage(Competition) - saving competition ${competition}:${competition.save() ? 'successful' : competition.errors}")
+    log.debug("onMessage(Competition) - end")
   }
 
   def onMessage (SimStart simStart)
@@ -56,24 +58,41 @@ class CompetitionManagementService implements MessageListener
     log.debug("Saving simStart - start @ ${simStart.start}")
 
     simStart.brokers?.each {
-      log.debug("Populate broker: ${it}")
+      log.debug("onMessage(SimStart) - populate broker: ${it}")
       def broker = new Broker(username: it, enabled: true)
       broker.save()
     }
-
 
     log.debug("onMessage(SimStart) - end")
   }
 
 
-  def onMessage (Timeslot slot)
+  def onMessage (TimeslotUpdate slotUpdate)
   {
-    log.debug("onMessage(Timeslot) - start")
+    log.debug("onMessage(TimeslotUpdate) - start")
 
-    slot.save()
-    log.debug("slot #${slot.serialNumber}, start@${slot.startInstant}, end@${slot.endInstant}")
+    log.debug("onMessage(TimeslotUpdate) - received TimeslotUpdate: ${slotUpdate.id}")
 
+    def newEnableds = []
+    slotUpdate.enabled?.each {
+      it.id = it.serialNumber
+      it.enabled = true
+      it.endInstant = it.startInstant // FIXME
+      log.debug("onMessage(TimeslotUpdate) -    saving enabled timeslot ${it.id}: ${(newEnableds << it.merge()) ? 'successful' : it.errors}")
+    }
+    slotUpdate.enabled = newEnableds
 
-    log.debug("onMessage(Timeslot) - end")
+    def newDisables = []
+    slotUpdate.disabled?.each {
+      it.id = it.serialNumber
+      it.enabled = false
+      it.endInstant = it.startInstant // FIXME
+      log.debug("onMessage(TimeslotUpdate) -    saving disabled timeslot ${it.id}: ${(newDisables << it.merge()) ? 'successful' : it.errors}")
+    }
+    slotUpdate.disabled = newDisables
+
+    log.debug("onMessage(TimeslotUpdate) - saving TimeslotUpdate ${slotUpdate.id}:${slotUpdate.save() ? 'successful' : slotUpdate.errors}")
+
+    log.debug("onMessage(TimeslotUpdate) - end")
   }
 }
