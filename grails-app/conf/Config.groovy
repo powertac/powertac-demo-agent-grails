@@ -68,11 +68,13 @@ log4j = {
     console name: 'stdout',
         layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
         threshold: org.apache.log4j.Level.INFO
-    file name: 'file', file: 'logs/powertac-broker.log',
+    rollingFile name: 'file', file: 'logs/powertac-broker.log',
         layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
-        threshold: org.apache.log4j.Level.DEBUG
-    file name: 'incoming_message', file: 'logs/powertac-incoming-messages.log',
-        threshold: org.apache.log4j.Level.DEBUG
+        threshold: org.apache.log4j.Level.DEBUG,
+        maxFileSize: '100MB'
+    rollingFile name: 'incoming_message', file: 'logs/powertac-incoming-messages.log',
+        threshold: org.apache.log4j.Level.DEBUG,
+        maxFileSize: '100MB'
   }
   warn 'org.codehaus.groovy.grails.web.servlet',  //  controllers
       'org.codehaus.groovy.grails.web.pages', //  GSP
