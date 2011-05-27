@@ -67,28 +67,21 @@ log4j = {
   appenders {
     console name: 'stdout',
         layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
-        threshold: org.apache.log4j.Level.INFO
-    rollingFile name: 'file', file: 'logs/powertac-broker.log',
+        threshold: org.apache.log4j.Level.WARN
+    file name: 'file', file: 'logs/powertac-broker.log',
         layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
         threshold: org.apache.log4j.Level.DEBUG,
-        maxFileSize: '100MB'
-    rollingFile name: 'incoming_message', file: 'logs/powertac-incoming-messages.log',
+        append: false
+    file name: 'incoming_message', file: 'logs/powertac-incoming-messages.log',
         threshold: org.apache.log4j.Level.DEBUG,
-        maxFileSize: '100MB'
+        append: false
   }
-  warn 'org.codehaus.groovy.grails.web.servlet',  //  controllers
-      'org.codehaus.groovy.grails.web.pages', //  GSP
-      'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-      'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-      'org.codehaus.groovy.grails.web.mapping', // URL mapping
-      'org.codehaus.groovy.grails.commons', // core / classloading
-      'org.codehaus.groovy.grails.plugins', // plugins
-      'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+
+  error 'org.codehaus',
       'org.springframework',
       'org.hibernate',
       'org.activemq',
-      'org.apache',
-      'grails.app'
+      'net.sf.ehcache'
 
   debug 'grails.app.service'
   debug 'grails.app.controller'
@@ -97,7 +90,7 @@ log4j = {
   debug 'incoming_message' : 'org.powertac.broker.infrastructure.messaging.XMLMessageReceiver'
 
   root {
-    debug 'stdout', 'file'
+    warn 'stdout', 'file'
   }
 }
 
