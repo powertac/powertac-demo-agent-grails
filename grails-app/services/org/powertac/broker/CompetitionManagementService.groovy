@@ -16,11 +16,9 @@
 
 package org.powertac.broker
 
-import org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar
 import org.powertac.broker.interfaces.MessageListener
 import org.powertac.common.Broker
 import org.powertac.common.Competition
-import org.powertac.common.Timeslot
 import org.powertac.common.msg.SimStart
 import org.powertac.common.msg.TimeslotUpdate
 
@@ -48,6 +46,13 @@ class CompetitionManagementService implements MessageListener
   def onMessage (Competition competition)
   {
     log.debug("onMessage(Competition) - start")
+
+    competition.brokers?.each {
+      log.debug("onMessage(Competition) - populate broker: ${it}")
+      def broker = new Broker(username: it, enabled: true)
+      broker.save()
+    }
+
     log.debug("onMessage(Competition) - saving competition ${competition}:${competition.save() ? 'successful' : competition.errors}")
     log.debug("onMessage(Competition) - end")
   }
@@ -57,11 +62,7 @@ class CompetitionManagementService implements MessageListener
     log.debug("onMessage(SimStart) - start")
     log.debug("Saving simStart - start @ ${simStart.start}")
 
-    simStart.brokers?.each {
-      log.debug("onMessage(SimStart) - populate broker: ${it}")
-      def broker = new Broker(username: it, enabled: true)
-      broker.save()
-    }
+    simStart.save()
 
     log.debug("onMessage(SimStart) - end")
   }
