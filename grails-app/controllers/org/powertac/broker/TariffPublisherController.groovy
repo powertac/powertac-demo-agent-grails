@@ -21,13 +21,21 @@ class TariffPublisherController {
     tariffSpec.broker = new Broker(username: params.broker, password: "")
 
     Rate rate = new Rate()
-    rate.setValue(0.121)
-    rate.setDailyBegin(new DateTime(2011, 1, 1, 6, 0, 0, 0, DateTimeZone.UTC))
-    rate.setDailyEnd(new DateTime(2011, 1, 1, 8, 0, 0, 0, DateTimeZone.UTC))
-
+    rate.setValue(0.08)
+    rate.setDailyBegin(23)
+    rate.setDailyEnd(6)
+    rate.save()
+    tariffSpec.addToRates(rate)
+    
+    rate = new Rate()
+    rate.setValue(0.14)
+    rate.setDailyBegin(7)
+    rate.setDailyEnd(22)
+    rate.save()
     tariffSpec.addToRates(rate)
 
     if (!tariffSpec.validate()) {
+      tariffSpec.save()
       render(view: 'index', model: [tariffSpecificationInstance: tariffSpec])
 
     } else {
