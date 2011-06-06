@@ -16,35 +16,190 @@
 
 package org.powertac.broker
 
+import org.joda.time.Instant
 import org.powertac.broker.interfaces.MessageListener
 import org.powertac.common.Broker
 import org.powertac.common.Competition
 import org.powertac.common.msg.SimStart
 import org.powertac.common.msg.TimeslotUpdate
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
+import org.powertac.common.TimeService
+import org.powertac.common.ClockDriveJob
+import org.quartz.Trigger
+import org.quartz.JobDetail
 
-class CompetitionManagementService implements MessageListener
+class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
   static transactional = true
+
+  Competition competition // convenience var, invalid across sessions
+  String competitionId
+  boolean running
+
+  int timeslotCount
+  long timeslotMillis
+
+  def quartzScheduler
+  def clockDriveJob
+  def timeService // inject simulation time service dependency
 
   def jmsConnectionFactory
   def jmsManagementService
   def messageReceiver
 
-  def initialize (loginResponseCmd)
-  {
+  def applicationContext
+
+  def initialize (loginResponseCmd) {
     // Generate broker URL and set it. Connection will be established automatically.
-    jmsConnectionFactory.connectionFactory.brokerURL = loginResponseCmd.serverAddress
+    setBrokerUrl(loginResponseCmd.serverAddress)
     jmsManagementService.registerBrokerMessageListener(loginResponseCmd.queueName, messageReceiver)
 
-    jmsManagementService.register(Competition, this)
-    jmsManagementService.register(SimStart, this)
-    jmsManagementService.register(TimeslotUpdate, this)
+    def classMap = applicationContext.getBeansOfType(MessageListener)
+    classMap.each { clazz, receiver ->
+      def logMsg = "registering ${clazz} with"
+      def msgs = receiver.messages
+      msgs?.each { message ->
+        jmsManagementService.register(message, receiver)
+      }
+      log.info("${logMsg} ${msgs.collect { it.simpleName }?.join(',')}")
+    }
+  }
 
+  def isConnected() {
+    def brokerUrl = getBrokerUrl()
+    brokerUrl != null && !brokerUrl.isEmpty()
+  }
+
+  def getBrokerUrl() {
+    jmsConnectionFactory.targetConnectionFactory.brokerURL
+  }
+
+  def setBrokerUrl(url) {
+    jmsConnectionFactory.targetConnectionFactory.brokerURL = url
+  }
+
+  /**
+   * Starts the simulation.
+   */
+  void start (long start) {
+    log.debug("start - start")
+    quartzScheduler.start()
+
+    setTimeParameters()
+
+    // Start up the clock at the correct time
+    timeService.start = start
+    timeService.updateTime()
+    scheduleFirstStep()
+
+    ClockDriveJob.schedule(new Date(start))
+    // Set final paramaters
+    running = true
+
+    log.debug("start - end")
+  }
+
+  void scheduleFirstStep()
+  {
+    log.debug("scheduleFirstStep - start")
+    timeService.addAction(new Instant(timeService.currentTime.millis),
+        { this.firstStep() })
+    log.debug("scheduleFirstStep - end")
+  }
+
+  /**
+   * Schedules a step of the simulation
+   */
+  void scheduleStep (long offset) {
+    timeService.addAction(new Instant(timeService.currentTime.millis + offset),
+        { this.step() })
   }
 
 
-  def onMessage (Competition competition)
-  {
+  void firstStep() {
+    log.debug("firstStep - start")
+
+    Competition competition = Competition.findById(competitionId)
+    if (competition) {
+      def repeatJobTrigger =  quartzScheduler.getTrigger('default', 'default')
+      repeatJobTrigger.repeatInterval = timeslotMillis / competition.simulationRate
+      repeatJobTrigger.repeatCount = competition.expectedTimeslotCount
+      quartzScheduler.rescheduleJob(repeatJobTrigger.name,
+                                 repeatJobTrigger.group,
+                                 repeatJobTrigger)
+    }
+    this.step()
+    log.debug("firstStep - end")
+  }
+
+  /**
+   * Runs a step of the simulation
+   */
+  void step () {
+    if (!running) {
+      log.info("Stop simulation")
+      shutDown()
+
+    }
+    competition = Competition.get(competitionId)
+    def time = timeService.currentTime
+    log.info "step at $time"
+
+
+
+    if (--timeslotCount <= 0) {
+      log.info "Stopping simulation"
+      //
+      running = false
+      shutDown()
+    }
+    else {
+      // check timeslot here??
+      scheduleStep(timeslotMillis)
+    }
+  }
+
+
+
+  /**
+   * Stops the simulation.
+   */
+  void stop () {
+    running = false
+  }
+
+  /**
+   * Shuts down the simulation and cleans up
+   */
+  void shutDown () {
+    running = false
+    quartzScheduler.shutdown()
+  }
+
+  //--------- local methods -------------
+
+  // set simulation time parameters, making sure that simulationStartTime
+  // is still sufficiently in the future.
+  void setTimeParameters () {
+    timeService.base = competition.simulationBaseTime.millis
+    timeService.currentTime = competition.simulationBaseTime
+    long rate = competition.simulationRate
+    long rem = rate % competition.timeslotLength
+    if (rem > 0) {
+      long mult = competition.simulationRate / competition.timeslotLength
+      log.warn "Simulation rate ${rate} not a multiple of ${competition.timeslotLength}; adjust to ${(mult + 1) * competition.timeslotLength}"
+      rate = (mult + 1) * competition.timeslotLength
+    }
+    timeService.rate = rate
+    timeService.modulo = competition.timeslotLength * TimeService.MINUTE
+  }
+
+  def getMessages () {
+    [Competition, SimStart, TimeslotUpdate]
+  }
+
+  def onMessage (Competition competition) {
     log.debug("onMessage(Competition) - start")
 
     competition.brokers?.each {
@@ -54,22 +209,29 @@ class CompetitionManagementService implements MessageListener
     }
 
     log.debug("onMessage(Competition) - saving competition ${competition}:${competition.save() ? 'successful' : competition.errors}")
+
+    this.competition = competition;
+    this.competitionId = competition.id
+    this.timeslotCount = competition.expectedTimeslotCount
+    this.timeslotMillis = competition.timeslotLength * TimeService.MINUTE
+
     log.debug("onMessage(Competition) - end")
   }
 
-  def onMessage (SimStart simStart)
-  {
+  def onMessage (SimStart simStart) {
     log.debug("onMessage(SimStart) - start")
     log.debug("Saving simStart - start @ ${simStart.start}")
 
     simStart.save()
 
+    log.debug("onMessage(SimStart) - this: ${this}")
+    this.start(simStart.start.millis)
+
     log.debug("onMessage(SimStart) - end")
   }
 
 
-  def onMessage (TimeslotUpdate slotUpdate)
-  {
+  def onMessage (TimeslotUpdate slotUpdate) {
     log.debug("onMessage(TimeslotUpdate) - start")
 
     log.debug("onMessage(TimeslotUpdate) - received TimeslotUpdate: ${slotUpdate.id}")
@@ -95,5 +257,9 @@ class CompetitionManagementService implements MessageListener
     log.debug("onMessage(TimeslotUpdate) - saving TimeslotUpdate ${slotUpdate.id}:${slotUpdate.save() ? 'successful' : slotUpdate.errors}")
 
     log.debug("onMessage(TimeslotUpdate) - end")
+  }
+
+  void setApplicationContext (ApplicationContext applicationContext) {
+    this.applicationContext = applicationContext
   }
 }

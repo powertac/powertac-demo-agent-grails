@@ -25,6 +25,7 @@ class XMLMessageReceiver {
   MessageListenerRegistrar messageListenerRegistrar
   MessageConverter messageConverter
 
+
   def onMessage(String xml) {
     log.debug("XMLMessageReceiver.onMessage(String) - received\n${xml}")
 
@@ -33,7 +34,15 @@ class XMLMessageReceiver {
 
     log.debug("XMLMessageReceiver - received ${obj.class.name}")
     log.debug("XMLMessageReceiver - dipatching to ${listeners?.size()} listeners")
+    try {
 
-    listeners?.each { it.onMessage(obj) }
+      listeners?.each { listener ->
+
+        listener.onMessage(obj)
+      }
+
+    } catch (e) {
+      log.error("Failed to process incoming xml message:\n${xml}\n", e)
+    }
   }
 }

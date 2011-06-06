@@ -16,8 +16,8 @@ class ConnectionController {
   def jmsConnectionFactory
 
   def index = {
-    if (jmsConnectionFactory.connectionFactory.brokerURL) {
-      flash.message = "Already connected to ${jmsConnectionFactory.connectionFactory.brokerURL}, redirecting to status page"
+    if (competitionManagementService.isConnected()) {
+      flash.message = "Already connected to ${competitionManagementService.getBrokerUrl()}, redirecting to status page"
       redirect controller: 'status'
       return
     }

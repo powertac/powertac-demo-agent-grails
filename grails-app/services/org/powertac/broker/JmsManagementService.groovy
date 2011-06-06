@@ -7,7 +7,7 @@ import org.powertac.broker.interfaces.MessageListener
 
 class JmsManagementService {
 
-  static transactional = true
+  static transactional = false
   def jmsConnectionFactory
   def jmsService
   def transactionManager
@@ -16,14 +16,16 @@ class JmsManagementService {
   MessageConverter messageConverter
 
   def registerBrokerMessageListener(String destinationName, javax.jms.MessageListener listener) {
-    log.info("creating listener container for ${destinationName}")
+    log.debug("registerBrokerMessageListener - start [creating listener container for ${destinationName}]")
     DefaultMessageListenerContainer container = new DefaultMessageListenerContainer()
     container.setConnectionFactory(jmsConnectionFactory)
     container.setDestinationName(destinationName)
     container.setMessageListener(listener)
     container.setTransactionManager(transactionManager)
+    container.setSessionTransacted(true)
     container.afterPropertiesSet()
     container.start()
+    log.debug("registerBrokerMessageListener - end")
   }
 
   def register(Class messageType, MessageListener listener) {

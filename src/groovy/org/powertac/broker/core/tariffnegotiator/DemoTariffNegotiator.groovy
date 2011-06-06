@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory
 import org.powertac.broker.api.TariffNegotiator
 import org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar
 import org.powertac.broker.interfaces.MessageListener
+import org.powertac.common.Rate
 import org.powertac.common.TariffSpecification
 import org.powertac.common.TariffTransaction
 
@@ -29,39 +30,59 @@ class DemoTariffNegotiator implements MessageListener, TariffNegotiator
 
   MessageListenerRegistrar messageListenerRegistrar
 
-  def initialize ()
-  {
-    messageListenerRegistrar.register(TariffSpecification, this)
-    messageListenerRegistrar.register(TariffTransaction, this)
+  def getMessages () {
+    [TariffSpecification, TariffTransaction]
   }
 
-  def onMessage (TariffSpecification ts)
-  {
+  def onMessage (TariffSpecification ts) {
     log.debug("onMessage(TariffSpecification) - start")
 
-    ts.save()
+    def processedRates = []
+
+    ts.rates.each { rate ->
+      def dbRate = Rate.findById(rate.id)
+      if (dbRate) {
+        log.debug("onMessage(TariffSpecification) - found [dbRate.id:${dbRate.id},dbRate.version:${dbRate.version},rate.version:${rate.version}]")
+        rate.version = dbRate.version
+        rate = rate.merge()
+        log.debug("onMessage(TariffSpecification) - after merge rate:${rate}")
+      } else {
+        log.debug("onMessage(TariffSpecification) - not found rate:${rate.id}")
+        rate.save()
+      }
+      processedRates << rate
+    }
+
+    log.debug("onMessage(TariffSpecification) - there are ${ts.rates.size()} item in ts.rates")
+    log.debug("onMessage(TariffSpecification) - there are ${processedRates.size()} item in processedRates")
+
+    ts.rates.clear()
+    ts.rates.addAll(processedRates)
+
+    if (TariffSpecification.findById(ts.id)) {
+      ts.merge()
+    } else {
+      ts.save()
+    }
 
     log.debug("onMessage(TariffSpecification) - end")
   }
 
-  def onMessage (TariffTransaction ttx)
-  {
+  def onMessage (TariffTransaction ttx) {
     log.debug("onMessage(TariffTransaction) - start")
 
-    ttx.save()
+    ttx.merge()
 
     log.debug("onMessage(TariffTransaction) - receving ${ttx.txType} ttx for ${ttx.broker.username}")
-    log.debug("onMessage(TariffTransaction) - ende")
+    log.debug("onMessage(TariffTransaction) - end")
 
   }
 
-  def offerTariffs (tariffs)
-  {
+  def offerTariffs (tariffs) {
     // TODO: send tariffs to market
   }
 
-  def setTariffOfferStatus (status)
-  {
+  def setTariffOfferStatus (status) {
     // TODO: send final decision to market
   }
 }

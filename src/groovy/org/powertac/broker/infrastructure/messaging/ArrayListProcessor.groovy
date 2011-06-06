@@ -23,9 +23,9 @@ class ArrayListProcessor implements MessageListener
 {
   def messageListenerRegistrar
 
-  def initialize ()
+  def getMessages()
   {
-    messageListenerRegistrar.register(ArrayList, this)
+    [ArrayList]
   }
 
   def onMessage (ArrayList list) {
