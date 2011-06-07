@@ -1,7 +1,7 @@
 package org.powertac.broker
 
 import org.springframework.jms.listener.DefaultMessageListenerContainer
-import grails.converters.XML
+
 import org.powertac.common.MessageConverter
 import org.powertac.broker.interfaces.MessageListener
 

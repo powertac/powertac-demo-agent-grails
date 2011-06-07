@@ -26,8 +26,6 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.powertac.common.TimeService
 import org.powertac.common.ClockDriveJob
-import org.quartz.Trigger
-import org.quartz.JobDetail
 
 class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
