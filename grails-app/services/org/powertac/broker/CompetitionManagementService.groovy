@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.powertac.common.TimeService
 import org.powertac.common.ClockDriveJob
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
@@ -76,7 +77,9 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   }
 
   def setBrokerUrl(url) {
-    jmsConnectionFactory.targetConnectionFactory.brokerURL = url
+    def completeUrl = url + ConfigurationHolder.config.powertac.brokerUrlOpts
+    log.debug("setBrokerUrl: completeUrl:${completeUrl}")
+    jmsConnectionFactory.targetConnectionFactory.brokerURL = completeUrl
   }
 
   /**

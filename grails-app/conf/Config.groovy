@@ -116,4 +116,6 @@ powertac {
           startupMaxReconnectAttempts=1 reduces the reconnection attempts at startup
   */
   server = "failover:(tcp://localhost:61616)?startupMaxReconnectAttempts=1"
+
+  brokerUrlOpts = "?timeout=3000"
 }
