@@ -16,6 +16,7 @@
 
 package org.powertac.broker
 
+import org.quartz.SimpleTrigger
 import org.joda.time.Instant
 import org.powertac.broker.interfaces.MessageListener
 import org.powertac.common.Broker
@@ -37,6 +38,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
   int timeslotCount
   long timeslotMillis
+  long startTime
 
   def quartzScheduler
   def clockDriveJob
@@ -89,46 +91,46 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     // Start up the clock at the correct time
     timeService.start = start
     timeService.updateTime()
-    scheduleFirstStep()
 
-    ClockDriveJob.schedule(new Date(start))
     // Set final paramaters
     running = true
+
+    def beginTime = System.nanoTime()
+    def beginRescheduleTime
+    def endTime
+    def nextFireTime
+
+    if (competition) {
+      // schedule first task
+      scheduleStep(0)
+
+      beginRescheduleTime = System.nanoTime()
+      def repeatJobTrigger = quartzScheduler.getTrigger('default', 'default')
+      repeatJobTrigger.repeatInterval = timeslotMillis / competition.simulationRate
+      repeatJobTrigger.repeatCount = SimpleTrigger.REPEAT_INDEFINITELY
+      repeatJobTrigger.startTime = new Date(start)
+      nextFireTime = quartzScheduler.rescheduleJob(repeatJobTrigger.name,
+                                 repeatJobTrigger.group,
+                                 repeatJobTrigger)
+      endTime = System.nanoTime()
+    }
+
+    log.debug("start - time for db search: ${beginRescheduleTime - beginTime}")
+    log.debug("start - time for reschedule: ${endTime - beginRescheduleTime}")
+    log.debug("start - total time: ${endTime - beginTime}")
+    log.debug("start - nextFireTime: ${nextFireTime}")
 
     log.debug("start - end")
   }
 
-  void scheduleFirstStep()
-  {
-    log.debug("scheduleFirstStep - start")
-    timeService.addAction(new Instant(timeService.currentTime.millis),
-        { this.firstStep() })
-    log.debug("scheduleFirstStep - end")
-  }
 
   /**
    * Schedules a step of the simulation
    */
-  void scheduleStep (long offset) {
+  void scheduleStep (long offset)
+  {
     timeService.addAction(new Instant(timeService.currentTime.millis + offset),
-        { this.step() })
-  }
-
-
-  void firstStep() {
-    log.debug("firstStep - start")
-
-    Competition competition = Competition.findById(competitionId)
-    if (competition) {
-      def repeatJobTrigger =  quartzScheduler.getTrigger('default', 'default')
-      repeatJobTrigger.repeatInterval = timeslotMillis / competition.simulationRate
-      repeatJobTrigger.repeatCount = competition.expectedTimeslotCount
-      quartzScheduler.rescheduleJob(repeatJobTrigger.name,
-                                 repeatJobTrigger.group,
-                                 repeatJobTrigger)
-    }
-    this.step()
-    log.debug("firstStep - end")
+			  { this.step() })
   }
 
   /**
@@ -140,7 +142,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
       shutDown()
 
     }
-    competition = Competition.get(competitionId)
+
     def time = timeService.currentTime
     log.info "step at $time"
 
@@ -238,7 +240,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     slotUpdate.enabled?.each {
       it.id = it.serialNumber
       it.enabled = true
-      it.endInstant = it.startInstant // FIXME
+      it.endInstant = it.startInstant + timeslotMillis
       log.debug("onMessage(TimeslotUpdate) -    saving enabled timeslot ${it.id}: ${(newEnableds << it.merge()) ? 'successful' : it.errors}")
     }
     slotUpdate.enabled = newEnableds
