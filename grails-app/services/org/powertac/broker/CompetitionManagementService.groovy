@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationContextAware
 import org.powertac.common.TimeService
 import org.powertac.common.ClockDriveJob
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.powertac.common.msg.SimEnd
 
 class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
@@ -37,7 +38,6 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   String competitionId
   boolean running
 
-  int timeslotCount
   long timeslotMillis
   long startTime
 
@@ -149,18 +149,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     def time = timeService.currentTime
     log.info "step at $time"
 
-
-
-    if (--timeslotCount <= 0) {
-      log.info "Stopping simulation"
-      //
-      running = false
-      shutDown()
-    }
-    else {
-      // check timeslot here??
-      scheduleStep(timeslotMillis)
-    }
+    scheduleStep(timeslotMillis)
   }
 
 
@@ -199,7 +188,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   }
 
   def getMessages () {
-    [Competition, SimStart, TimeslotUpdate]
+    [Competition, SimStart, TimeslotUpdate, SimEnd]
   }
 
   def onMessage (Competition competition) {
@@ -215,7 +204,6 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
     this.competition = competition;
     this.competitionId = competition.id
-    this.timeslotCount = competition.expectedTimeslotCount
     this.timeslotMillis = competition.timeslotLength * TimeService.MINUTE
 
     log.debug("onMessage(Competition) - end")
@@ -233,6 +221,9 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     log.debug("onMessage(SimStart) - end")
   }
 
+  def onMessage (SimEnd simEnd) {
+    shutDown()
+  }
 
   def onMessage (TimeslotUpdate slotUpdate) {
     log.debug("onMessage(TimeslotUpdate) - start")
@@ -261,6 +252,8 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
     log.debug("onMessage(TimeslotUpdate) - end")
   }
+
+
 
   void setApplicationContext (ApplicationContext applicationContext) {
     this.applicationContext = applicationContext

@@ -12,13 +12,11 @@ beans = {
     }
   }
 
-  messageConverter(org.powertac.common.MessageConverter)
-
   messageListenerRegistrar(org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar)
 
   xmlMessageReceiver(org.powertac.broker.infrastructure.messaging.XMLMessageReceiver) {
     messageListenerRegistrar = messageListenerRegistrar
-    messageConverter = messageConverter
+    messageConverter = ref('messageConverter')
   }
 
   messageReceiver(org.powertac.broker.infrastructure.messaging.MessageReceiver) {
