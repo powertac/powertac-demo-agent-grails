@@ -54,6 +54,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   def messageReceiver
 
   def applicationContext
+  def dataSource
 
   String dumpFilePrefix = (ConfigurationHolder.config.powertac?.dumpFilePrefix) ?: "logs/PowerTAC-dump-"
 
