@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContextAware
 
 class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
-  static transactional = true
+  static transactional = false
 
   Competition competition // convenience var, invalid across sessions
   String competitionId
@@ -54,6 +54,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   def messageReceiver
 
   def applicationContext
+  def grailsApplication
   def dataSource
 
   String dumpFilePrefix = (ConfigurationHolder.config.powertac?.dumpFilePrefix) ?: "logs/PowerTAC-dump-"
@@ -150,13 +151,13 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     if (!running) {
       log.info("Stop simulation")
       shutDown()
+    } else {
+      def time = timeService.currentTime
+      log.info "step at $time"
+
+      timeslotPhaseService.process(time)
+      scheduleStep(timeslotMillis)
     }
-
-    def time = timeService.currentTime
-    log.info "step at $time"
-
-    timeslotPhaseService.process(time)
-    scheduleStep(timeslotMillis)
   }
 
   /**
@@ -241,7 +242,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   }
 
   def onMessage (SimEnd simEnd) {
-    shutDown()
+    stop()
   }
 
   def onMessage (TimeslotUpdate slotUpdate) {

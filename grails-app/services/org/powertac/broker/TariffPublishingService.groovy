@@ -5,7 +5,7 @@ import org.powertac.common.TariffSpecification;
 
 class TariffPublishingService {
 
-  static transactional = true
+  static transactional = false
 
   def jmsManagementService
 
