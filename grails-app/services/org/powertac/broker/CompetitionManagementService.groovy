@@ -16,19 +16,18 @@
 
 package org.powertac.broker
 
-import org.quartz.SimpleTrigger
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.joda.time.Instant
 import org.powertac.broker.interfaces.MessageListener
 import org.powertac.common.Broker
 import org.powertac.common.Competition
+import org.powertac.common.TimeService
+import org.powertac.common.msg.SimEnd
 import org.powertac.common.msg.SimStart
 import org.powertac.common.msg.TimeslotUpdate
+import org.quartz.SimpleTrigger
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
-import org.powertac.common.TimeService
-import org.powertac.common.ClockDriveJob
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.powertac.common.msg.SimEnd
 
 class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
@@ -40,6 +39,8 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
   long timeslotMillis
   long startTime
+
+  def timeslotPhaseService
 
   def quartzScheduler
   def clockDriveJob
@@ -67,16 +68,16 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     }
   }
 
-  def isConnected() {
+  def isConnected () {
     def brokerUrl = getBrokerUrl()
     brokerUrl != null && !brokerUrl.isEmpty()
   }
 
-  def getBrokerUrl() {
+  def getBrokerUrl () {
     jmsConnectionFactory.targetConnectionFactory.brokerURL
   }
 
-  def setBrokerUrl(url) {
+  def setBrokerUrl (url) {
     def completeUrl = url + ConfigurationHolder.config.powertac.brokerUrlOpts
     log.debug("setBrokerUrl: completeUrl:${completeUrl}")
     jmsConnectionFactory.targetConnectionFactory.brokerURL = completeUrl
@@ -113,8 +114,8 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
       repeatJobTrigger.repeatCount = SimpleTrigger.REPEAT_INDEFINITELY
       repeatJobTrigger.startTime = new Date(start)
       nextFireTime = quartzScheduler.rescheduleJob(repeatJobTrigger.name,
-                                 repeatJobTrigger.group,
-                                 repeatJobTrigger)
+          repeatJobTrigger.group,
+          repeatJobTrigger)
       endTime = System.nanoTime()
     }
 
@@ -126,14 +127,12 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     log.debug("start - end")
   }
 
-
   /**
    * Schedules a step of the simulation
    */
-  void scheduleStep (long offset)
-  {
+  void scheduleStep (long offset) {
     timeService.addAction(new Instant(timeService.currentTime.millis + offset),
-			  { this.step() })
+        { this.step() })
   }
 
   /**
@@ -143,16 +142,14 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     if (!running) {
       log.info("Stop simulation")
       shutDown()
-
     }
 
     def time = timeService.currentTime
     log.info "step at $time"
 
+    timeslotPhaseService.process(time)
     scheduleStep(timeslotMillis)
   }
-
-
 
   /**
    * Stops the simulation.

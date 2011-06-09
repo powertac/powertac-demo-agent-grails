@@ -5,6 +5,7 @@ grails.project.test.reports.dir = "target/test-reports"
 
 // development plugin locations
 grails.plugin.location.PowertacCommon = "../powertac-common"
+grails.plugin.location.PowertacServerInterface = "../powertac-server-interface"
 
 grails.project.dependency.resolution = {
   // inherit Grails' default dependencies
