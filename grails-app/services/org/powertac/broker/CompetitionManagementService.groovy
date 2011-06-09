@@ -16,6 +16,8 @@
 
 package org.powertac.broker
 
+import greenbill.dbstuff.DbCreate
+import greenbill.dbstuff.DataExport
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.joda.time.Instant
 import org.powertac.broker.interfaces.MessageListener
@@ -41,6 +43,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   long startTime
 
   def timeslotPhaseService
+  def logService
 
   def quartzScheduler
   def clockDriveJob
@@ -51,6 +54,8 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   def messageReceiver
 
   def applicationContext
+
+  String dumpFilePrefix = (ConfigurationHolder.config.powertac?.dumpFilePrefix) ?: "logs/PowerTAC-dump-"
 
   def initialize (loginResponseCmd) {
     // Generate broker URL and set it. Connection will be established automatically.
@@ -87,6 +92,8 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
    * Starts the simulation.
    */
   void start (long start) {
+    logService.start()
+
     log.debug("start - start")
     quartzScheduler.start()
 
@@ -164,6 +171,20 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   void shutDown () {
     running = false
     quartzScheduler.shutdown()
+
+    File dumpfile = new File("${dumpFilePrefix}${competitionId}.xml")
+
+    DataExport de = new DataExport()
+    de.dataSource = dataSource
+    de.export(dumpfile, 'powertac')
+
+    logService.stop()
+
+    // refresh DB
+    DbCreate dc = new DbCreate()
+    dc.dataSource = dataSource
+    dc.create(grailsApplication)
+
   }
 
   //--------- local methods -------------
@@ -240,7 +261,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     slotUpdate.disabled?.each {
       it.id = it.serialNumber
       it.enabled = false
-      it.endInstant = it.startInstant // FIXME
+      it.endInstant = it.startInstant + timeslotMillis
       log.debug("onMessage(TimeslotUpdate) -    saving disabled timeslot ${it.id}: ${(newDisables << it.merge()) ? 'successful' : it.errors}")
     }
     slotUpdate.disabled = newDisables

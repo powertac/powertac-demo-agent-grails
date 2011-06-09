@@ -1,12 +1,14 @@
 package org.powertac.broker
 
 import org.powertac.common.interfaces.TimeslotPhaseProcessor
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class TimeslotPhaseService
 {
   static transactional = false
 
   def phaseRegistrations
+  def timeslotPhaseCount = (ConfigurationHolder.config.powertac?.numTimeslotPhases) ?: 3
 
   /**
    * Sign up for notifications
