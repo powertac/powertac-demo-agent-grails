@@ -24,6 +24,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>.link_to_grails_plugins</name>
+			<type>2</type>
+			<locationURI>GRAILS_ROOT/1.3.7/projects/powertac-demo-agent-grails/plugins</locationURI>
+		</link>
+		<link>
 			<name>jms-1.1-grails-app-services</name>
 			<type>2</type>
 			<locationURI>GRAILS_ROOT/1.3.6/projects/powertac-demo-agent-grails/plugins/jms-1.1/grails-app/services</locationURI>
