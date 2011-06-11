@@ -23,59 +23,30 @@ import org.powertac.broker.interfaces.MessageListener
 import org.powertac.common.Rate
 import org.powertac.common.TariffSpecification
 import org.powertac.common.TariffTransaction
+import org.powertac.common.msg.TariffStatus
 
 class DemoTariffNegotiator implements MessageListener, TariffNegotiator
 {
   private static final log = LogFactory.getLog(this)
 
-  MessageListenerRegistrar messageListenerRegistrar
-
   def getMessages () {
-    [TariffSpecification, TariffTransaction]
+    [TariffSpecification, TariffTransaction, TariffStatus]
   }
 
   def onMessage (TariffSpecification ts) {
     log.debug("onMessage(TariffSpecification) - start")
-
-    def processedRates = []
-
-    ts.rates.each { rate ->
-      def dbRate = Rate.findById(rate.id)
-      if (dbRate) {
-        log.debug("onMessage(TariffSpecification) - found [dbRate.id:${dbRate.id},dbRate.version:${dbRate.version},rate.version:${rate.version}]")
-        rate.version = dbRate.version
-        rate = rate.merge()
-        log.debug("onMessage(TariffSpecification) - after merge rate:${rate}")
-      } else {
-        log.debug("onMessage(TariffSpecification) - not found rate:${rate.id}")
-        rate.save()
-      }
-      processedRates << rate
-    }
-
-    log.debug("onMessage(TariffSpecification) - there are ${ts.rates.size()} item in ts.rates")
-    log.debug("onMessage(TariffSpecification) - there are ${processedRates.size()} item in processedRates")
-
-    ts.rates.clear()
-    ts.rates.addAll(processedRates)
-
-    if (TariffSpecification.findById(ts.id)) {
-      ts.merge()
-    } else {
-      ts.save()
-    }
-
     log.debug("onMessage(TariffSpecification) - end")
   }
 
   def onMessage (TariffTransaction ttx) {
     log.debug("onMessage(TariffTransaction) - start")
-
-    ttx.merge()
-
-    log.debug("onMessage(TariffTransaction) - receving ${ttx.txType} ttx for ${ttx.broker.username}")
     log.debug("onMessage(TariffTransaction) - end")
 
+  }
+
+  def onMessage (TariffStatus ts) {
+    log.debug("onMessage(TariffStatus) - start")
+    log.debug("onMessage(TariffStatus) - start")
   }
 
   def offerTariffs (tariffs) {

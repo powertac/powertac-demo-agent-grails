@@ -94,9 +94,10 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
    * Starts the simulation.
    */
   void start (long start) {
+    log.debug("start - start")
+
     logService.start()
 
-    log.debug("start - start")
     quartzScheduler.start()
 
     setTimeParameters()
@@ -214,14 +215,6 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   def onMessage (Competition competition) {
     log.debug("onMessage(Competition) - start")
 
-    competition.brokers?.each {
-      log.debug("onMessage(Competition) - populate broker: ${it}")
-      def broker = new Broker(username: it, enabled: true)
-      broker.save()
-    }
-
-    log.debug("onMessage(Competition) - saving competition ${competition}:${competition.save() ? 'successful' : competition.errors}")
-
     this.competition = competition;
     this.competitionId = competition.id
     this.timeslotMillis = competition.timeslotLength * TimeService.MINUTE
@@ -231,49 +224,23 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
   def onMessage (SimStart simStart) {
     log.debug("onMessage(SimStart) - start")
-    log.debug("Saving simStart - start @ ${simStart.start}")
 
-    simStart.save()
-
-    log.debug("onMessage(SimStart) - this: ${this}")
     this.start(simStart.start.millis)
 
     log.debug("onMessage(SimStart) - end")
   }
 
   def onMessage (SimEnd simEnd) {
+    log.debug("onMessage(SimEnd) - start")
     stop()
+    log.debug("onMessage(SimEnd) - end")
   }
 
   def onMessage (TimeslotUpdate slotUpdate) {
     log.debug("onMessage(TimeslotUpdate) - start")
 
-    log.debug("onMessage(TimeslotUpdate) - received TimeslotUpdate: ${slotUpdate.id}")
-
-    def newEnableds = []
-    slotUpdate.enabled?.each {
-      it.id = it.serialNumber
-      it.enabled = true
-      it.endInstant = it.startInstant + timeslotMillis
-      log.debug("onMessage(TimeslotUpdate) -    saving enabled timeslot ${it.id}: ${(newEnableds << it.merge()) ? 'successful' : it.errors}")
-    }
-    slotUpdate.enabled = newEnableds
-
-    def newDisables = []
-    slotUpdate.disabled?.each {
-      it.id = it.serialNumber
-      it.enabled = false
-      it.endInstant = it.startInstant + timeslotMillis
-      log.debug("onMessage(TimeslotUpdate) -    saving disabled timeslot ${it.id}: ${(newDisables << it.merge()) ? 'successful' : it.errors}")
-    }
-    slotUpdate.disabled = newDisables
-
-    log.debug("onMessage(TimeslotUpdate) - saving TimeslotUpdate ${slotUpdate.id}:${slotUpdate.save() ? 'successful' : slotUpdate.errors}")
-
     log.debug("onMessage(TimeslotUpdate) - end")
   }
-
-
 
   void setApplicationContext (ApplicationContext applicationContext) {
     this.applicationContext = applicationContext

@@ -30,7 +30,7 @@ class ArrayListProcessor implements MessageListener
 
   def onMessage (ArrayList list) {
     list.each { obj ->
-      def listeners = messageListenerRegistrar.getRegistrations(obj.class)
+      def listeners = messageListenerRegistrar.getAssignableRegistrations(obj.class)
       listeners?.each { listener -> listener.onMessage(obj) }
     }
   }

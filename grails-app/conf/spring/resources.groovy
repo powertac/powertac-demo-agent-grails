@@ -27,7 +27,12 @@ beans = {
     messageListenerRegistrar = messageListenerRegistrar
   }
 
-  tariffNegotiator(org.powertac.broker.core.tariffnegotiator.DemoTariffNegotiator) { bean ->
-    messageListenerRegistrar = messageListenerRegistrar
+  messagePersistenceManager(org.powertac.broker.infrastructure.persistence.MessagePersistenceManager)
+
+  marketMessageListener(org.powertac.broker.infrastructure.messaging.MarketMessageListener)  { bean ->
+    messagePersistenceManager = messagePersistenceManager
   }
+
+  tariffNegotiator(org.powertac.broker.core.tariffnegotiator.DemoTariffNegotiator)
+
 }

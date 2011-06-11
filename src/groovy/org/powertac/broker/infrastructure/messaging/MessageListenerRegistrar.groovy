@@ -17,8 +17,11 @@
 package org.powertac.broker.infrastructure.messaging
 
 import org.powertac.broker.interfaces.MessageListener
+import org.apache.commons.logging.LogFactory
 
 class MessageListenerRegistrar {
+  private static final log = LogFactory.getLog(this)
+
   def registrations = [:]
 
   public void register(Class clazz, MessageListener listener) {
@@ -30,14 +33,29 @@ class MessageListenerRegistrar {
     listeners << listener
   }
 
-  public void unregister(Class clazz, MessageListener listener) {
+  public MessageListener unregister(Class clazz, MessageListener listener) {
     def listeners = registrations.get(clazz)
+    def foundListener = null
     if (listeners) {
-      listeners.remove(listener)
+      foundListener = listeners.remove(listener)
     }
+
+    return foundListener
   }
 
   Set<MessageListener> getRegistrations(Class clazz) {
     registrations.get(clazz)?.clone()
+  }
+
+  Set<MessageListener> getAssignableRegistrations(Class clazz) {
+    log.debug("getAssignableRegistrations(${clazz}) - start")
+    def listeners = [] as Set
+    registrations.each { key, value ->
+      if (key.isAssignableFrom(clazz)) {
+        listeners.addAll(value)
+      }
+    }
+    log.debug("getAssignableRegistrations(${clazz}) - end ${listeners}")
+    return listeners
   }
 }

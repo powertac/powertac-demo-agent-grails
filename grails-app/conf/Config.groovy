@@ -117,5 +117,5 @@ powertac {
   */
   server = "failover:(tcp://localhost:61616)?startupMaxReconnectAttempts=1"
 
-  brokerUrlOpts = "?timeout=3000"
+  brokerUrlOpts = "?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0"
 }

@@ -15,7 +15,8 @@ class TimeslotPhaseService
    */
   void registerTimeslotPhase (TimeslotPhaseProcessor thing, int phase) {
     if (phase <= 0 || phase > timeslotPhaseCount) {
-      log.error "phase ${phase} out of range (1..${timeslotPhaseCount})"
+      def msg = "phase ${phase} out of range (1..${timeslotPhaseCount})"
+      throw new IllegalArgumentException(msg)
     }
     else {
       if (phaseRegistrations == null) {
@@ -30,7 +31,8 @@ class TimeslotPhaseService
 
   void unregisterTimeslotPhase (TimeslotPhaseProcessor thing, int phase) {
     if (phase <= 0 || phase > timeslotPhaseCount) {
-      log.error "phase ${phase} out of range (1..${timeslotPhaseCount})"
+      def msg = "phase ${phase} out of range (1..${timeslotPhaseCount})"
+      throw new IllegalArgumentException(msg)
     } else {
       phaseRegistrations[phase - 1].remove(thing)
     }
@@ -42,7 +44,7 @@ class TimeslotPhaseService
     }
   }
 
-  def process (time) {
+  protected void process (time) {
     phaseRegistrations.eachWithIndex { fnList, index ->
       log.info "activate phase ${index + 1}: ${fnList}"
       fnList*.activate(time, index + 1)
