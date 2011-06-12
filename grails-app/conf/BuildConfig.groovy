@@ -48,4 +48,10 @@ grails.project.dependency.resolution = {
     // this should have been inherited from powertac-common but somehow IntelliJ doesn't see this
     // compile( group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.3.1', export: true )
   }
+
+  plugins {
+    build ':hibernate:1.3.7',':joda-time:1.1',':jms:1.1',':maven-publisher:0.8.1',
+          ':quartz:0.4.2',':tomcat:1.3.7'
+  }
 }
+
