@@ -119,3 +119,6 @@ powertac {
 
   brokerUrlOpts = "?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0"
 }
+
+// Added by the powertac-common plugin:
+grails.validateable.packages = ['org.powertac.common.command']
