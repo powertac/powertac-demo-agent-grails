@@ -4,9 +4,9 @@ grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
 // development plugin locations
-//grails.plugin.location.PowertacCommon = "../powertac-common"
-//grails.plugin.location.PowertacServerInterface = "../powertac-server-interface"
-//grails.plugin.location.PowertacDbStuff = "../powertac-db-stuff"
+grails.plugin.location.PowertacCommon = "../powertac-common"
+grails.plugin.location.PowertacServerInterface = "../powertac-server-interface"
+grails.plugin.location.PowertacDbStuff = "../powertac-db-stuff"
 
 grails.project.dependency.resolution = {
   // inherit Grails' default dependencies
@@ -51,10 +51,10 @@ grails.project.dependency.resolution = {
     // this should have been inherited from powertac-common but somehow IntelliJ doesn't see this
     // compile( group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.3.1', export: true )
   }
-  
+
   plugins {
-    build ':powertac-common:latest.integration'
-    build ':powertac-server-interface:latest.integration'
-    build ':powertac-db-stuff:latest.integration'
+    build ':hibernate:1.3.7',':joda-time:1.1',':jms:1.1',':maven-publisher:0.8.1',
+          ':quartz:0.4.2',':tomcat:1.3.7'
   }
 }
+
