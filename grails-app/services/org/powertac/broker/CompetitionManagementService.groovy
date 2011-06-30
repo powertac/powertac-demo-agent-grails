@@ -24,8 +24,8 @@ import org.powertac.broker.interfaces.MessageListener
 import org.powertac.common.Broker
 import org.powertac.common.Competition
 import org.powertac.common.TimeService
-import org.powertac.common.msg.SimEnd
-import org.powertac.common.msg.SimStart
+import org.powertac.common.command.SimEnd;
+import org.powertac.common.command.SimStart;
 import org.powertac.common.msg.TimeslotUpdate
 import org.quartz.SimpleTrigger
 import org.springframework.context.ApplicationContext

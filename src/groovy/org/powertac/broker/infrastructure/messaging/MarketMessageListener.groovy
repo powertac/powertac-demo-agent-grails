@@ -3,8 +3,8 @@ package org.powertac.broker.infrastructure.messaging
 import org.apache.commons.logging.LogFactory
 import org.powertac.broker.infrastructure.persistence.MessagePersistenceManager
 import org.powertac.broker.interfaces.MessageListener
-import org.powertac.common.msg.SimEnd
-import org.powertac.common.msg.SimStart
+import org.powertac.common.command.SimEnd;
+import org.powertac.common.command.SimStart;
 
 class MarketMessageListener implements MessageListener
 {

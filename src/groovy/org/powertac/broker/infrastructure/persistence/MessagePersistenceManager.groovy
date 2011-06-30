@@ -1,7 +1,7 @@
 package org.powertac.broker.infrastructure.persistence
 
 import org.apache.commons.logging.LogFactory
-import org.powertac.common.msg.SimStart
+import org.powertac.common.command.SimStart;
 import org.powertac.common.msg.TariffStatus
 import org.powertac.common.msg.TimeslotUpdate
 import org.powertac.common.*
