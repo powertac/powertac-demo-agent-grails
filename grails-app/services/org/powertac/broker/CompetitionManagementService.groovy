@@ -98,8 +98,6 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
     logService.start()
 
-    quartzScheduler.start()
-
     setTimeParameters()
 
     // Start up the clock at the correct time

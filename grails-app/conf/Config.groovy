@@ -115,7 +115,12 @@ powertac {
          tries to connect to the server on startup and blocks the app unless it is connected.
           startupMaxReconnectAttempts=1 reduces the reconnection attempts at startup
   */
-  server = "failover:(tcp://localhost:61616)?startupMaxReconnectAttempts=1"
+  server = 'http://localhost:8080/powertac-server/'
 
-  brokerUrlOpts = "?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0"
+  brokerUrlOpts = '?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0'
+
+  broker.login.mode = 'auto'
 }
+
+// Added by the powertac-common plugin:
+grails.validateable.packages = ['org.powertac.common.command']

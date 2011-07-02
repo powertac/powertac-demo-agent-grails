@@ -39,7 +39,7 @@ class MessagePersistenceManager
 
     def processedAsks = []
     asks.each { ask ->
-      def dbAsk = OrderbookEntry.findById(ask.id)
+      def dbAsk = OrderbookAsk.findById(ask.id)
       if (dbAsk) {
         ask.version = dbAsk.version
         ask = ask.merge()
@@ -49,7 +49,7 @@ class MessagePersistenceManager
 
     def processedBids = []
     bids.each { bid ->
-      def dbBid = OrderbookEntry.findById(bid.id)
+      def dbBid = OrderbookBid.findById(bid.id)
       if (dbBid) {
         bid.version = dbBid.version
         bid = bid.merge()
@@ -208,5 +208,9 @@ class MessagePersistenceManager
     log.debug("save(TimeslotUpdate) - saving TimeslotUpdate ${slotUpdate.id}:${slotUpdate.save() ? 'successful' : slotUpdate.errors}")
 
     log.debug("save(TimeslotUpdate) - end")
+  }
+
+  def save (BalancingTransaction bt) {
+
   }
 }
