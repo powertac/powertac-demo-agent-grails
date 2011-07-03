@@ -30,6 +30,10 @@ import org.powertac.common.msg.TimeslotUpdate
 import org.quartz.SimpleTrigger
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import org.apache.catalina.startup.PasswdUserDatabase
+import org.powertac.common.command.SimPause
+import org.powertac.common.command.SimResume
+import org.powertac.broker.api.GameStateType
 
 class CompetitionManagementService implements MessageListener, ApplicationContextAware
 {
@@ -52,6 +56,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   def jmsConnectionFactory
   def jmsManagementService
   def messageReceiver
+  def gameStateService
 
   def applicationContext
   def grailsApplication
@@ -207,7 +212,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   }
 
   def getMessages () {
-    [Competition, SimStart, TimeslotUpdate, SimEnd]
+    [Competition, SimStart, TimeslotUpdate, SimEnd, SimPause, SimResume]
   }
 
   def onMessage (Competition competition) {
@@ -223,6 +228,7 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
   def onMessage (SimStart simStart) {
     log.debug("onMessage(SimStart) - start")
 
+    gameStateService.setState(GameStateType.RUNNING)
     this.start(simStart.start.millis)
 
     log.debug("onMessage(SimStart) - end")
@@ -230,7 +236,10 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
 
   def onMessage (SimEnd simEnd) {
     log.debug("onMessage(SimEnd) - start")
-    stop()
+
+    gameStateService.setState(GameStateType.STOPPED)
+    this.stop()
+
     log.debug("onMessage(SimEnd) - end")
   }
 
@@ -238,6 +247,15 @@ class CompetitionManagementService implements MessageListener, ApplicationContex
     log.debug("onMessage(TimeslotUpdate) - start")
 
     log.debug("onMessage(TimeslotUpdate) - end")
+  }
+
+  def onMessage (SimPause sp)
+  {
+    gameStateService.setState(GameStateType.PAUSED)
+  }
+
+  def onMessage (SimResume sr) {
+    gameStateService.setState(GameStateType.RUNNING)
   }
 
   void setApplicationContext (ApplicationContext applicationContext) {
