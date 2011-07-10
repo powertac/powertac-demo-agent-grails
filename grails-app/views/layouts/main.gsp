@@ -12,6 +12,10 @@
             <img src="${resource(dir:'images',file:'spinner.gif')}" alt="${message(code:'spinner.alt',default:'Loading...')}" />
         </div>
         <div id="grailsLogo"><a href="${createLink(uri: '/')}"><img src="${resource(dir:'images',file:'powertac_logo.png')}" alt="Power TAC" border="0" /></a></div>
+        <div id="statusBox">
+          <g:render template="/quickStatus"/>
+        </div>
+
         <g:layoutBody />
     </body>
 </html>

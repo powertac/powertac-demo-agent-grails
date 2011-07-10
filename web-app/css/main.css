@@ -277,3 +277,13 @@ th.desc a {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* CUSTOMIZATION */
+
+#statusBox {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding:20px;
+
+}

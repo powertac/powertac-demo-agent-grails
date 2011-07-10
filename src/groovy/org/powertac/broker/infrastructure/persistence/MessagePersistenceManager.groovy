@@ -80,11 +80,17 @@ class MessagePersistenceManager
   def save (CashPosition cp) {
     log.debug("save(CashPosition) - begin")
 
-    def dbCp = CashPosition.findById(cp.id)
+    def dbCp = CashPosition.findByBroker(cp.broker)
     if (dbCp) {
+      log.debug("save(CashPosition) - found with version ${dbCp.version}")
+      cp.id = dbCp.id
       cp.version = dbCp.version
+      cp.merge()
+    } else {
+      log.debug("save(CashPosition) - not found, saving as new")
+      cp.id = null
+      cp.save(flush: true)
     }
-    cp.merge()
 
     log.debug("save(CashPosition) - end")
   }

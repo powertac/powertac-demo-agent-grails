@@ -69,7 +69,7 @@ log4j = {
         layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
         threshold: org.apache.log4j.Level.WARN
     file name: 'file', file: 'logs/powertac-broker.log',
-        layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n"),
+        layout: pattern(conversionPattern: "%d [%t] %-5p %c{2} %x - %m%n"),
         threshold: org.apache.log4j.Level.DEBUG,
         append: false
     file name: 'incoming_message', file: 'logs/powertac-incoming-messages.log',
@@ -85,7 +85,8 @@ log4j = {
 
   debug 'grails.app.service'
   debug 'grails.app.controller'
-  debug 'org.powertac.broker'
+  debug 'grails.app.task'
+  debug 'org.powertac'
 
   debug 'incoming_message' : 'org.powertac.broker.infrastructure.messaging.XMLMessageReceiver'
 

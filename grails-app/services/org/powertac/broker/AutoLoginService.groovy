@@ -43,8 +43,6 @@ class AutoLoginService
           log.info("Failed to connect to server: ${e.message}")
         }
       }
-    } else {
-      initialize()
     }
   }
 }

@@ -14,19 +14,19 @@ environments {
     development {
         dataSource {
             dbCreate = "create-drop" // one of 'create', 'create-drop','update'
-            url = "jdbc:hsqldb:mem:devDB"
+            url = "jdbc:hsqldb:mem:demoBrokerDev"
         }
     }
     test {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:hsqldb:mem:testDb"
+            dbCreate = "create-drop"
+            url = "jdbc:hsqldb:mem:demoBrokerTest"
         }
     }
     production {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:hsqldb:file:prodDb;shutdown=true"
+            dbCreate = "create-drop"
+            url = "jdbc:hsqldb:file:demoBrokerProdDb;shutdown=true"
         }
     }
 }
