@@ -51,7 +51,7 @@ grails.project.dependency.resolution = {
 
   plugins {
     build ':hibernate:1.3.7',':joda-time:1.1',':jms:1.1',':maven-publisher:0.8.1',
-          ':quartz:0.4.2',':tomcat:1.3.7'
+          ':quartz:0.4.2',':tomcat:1.3.7', ':jquery:1.6.1.1'
   }
 }
 
