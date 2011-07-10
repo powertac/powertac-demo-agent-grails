@@ -267,13 +267,20 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   }
 
   def onMessage (SimPause sp) {
+    log.debug("onMessage(SimPause) - start")
+
     gameStateService.setState(GameStateType.PAUSED)
     pauseTimer()
+
+    log.debug("onMessage(SimPause) - end : [state:${gameStateService.state}")
   }
 
   def onMessage (SimResume sr) {
+    log.debug("onMessage(SimResume) - start")
+
     gameStateService.setState(GameStateType.RUNNING)
     startTimer(sr.start.millis)
+    log.debug("onMessage(SimResume) - end : [state:${gameStateService.state}")
   }
 
   void setApplicationContext (ApplicationContext applicationContext) {

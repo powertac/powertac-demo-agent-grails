@@ -26,9 +26,7 @@ class XMLMessageReceiver {
   MessageConverter messageConverter
 
   def onMessage(String xml) {
-    log.debug("onMessage(String) - start received\n${xml[0..5]}")
-
-    log.debug("onMessage(String) -about to send to message converter")
+    log.debug("onMessage(String) - start received\n${xml}")
     def obj = messageConverter.fromXML(xml)
     log.debug("onMessage(String) - converted to ${obj?.class.name}")
     def listeners = messageListenerRegistrar.getAssignableRegistrations(obj.class)
