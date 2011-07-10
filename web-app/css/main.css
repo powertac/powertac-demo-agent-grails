@@ -285,5 +285,9 @@ th.desc a {
   top: 0px;
   right: 0px;
   padding:20px;
+  text-align: right;
+}
 
+#pauseActionStatus {
+  color: #006dba;
 }

@@ -92,6 +92,8 @@ class MessagePersistenceManager
       cp.save(flush: true)
     }
 
+    log.debug("save(CashPosition) - XXXX broker ${cp?.broker?.username} has ${cp?.balance}")
+
     log.debug("save(CashPosition) - end")
   }
 

@@ -17,9 +17,10 @@
 package org.powertac.broker.infrastructure.messaging
 
 import org.powertac.broker.interfaces.MessageListener
+import org.powertac.broker.interfaces.MessageListenerWithAutoRegistration
 
 
-class ArrayListProcessor implements MessageListener
+class ArrayListProcessor implements MessageListenerWithAutoRegistration
 {
   def messageListenerRegistrar
 

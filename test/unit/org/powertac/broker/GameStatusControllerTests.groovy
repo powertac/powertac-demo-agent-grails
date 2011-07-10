@@ -2,7 +2,7 @@ package org.powertac.broker
 
 import grails.test.*
 
-class GameStateControllerTests extends ControllerUnitTestCase
+class GameStatusControllerTests extends ControllerUnitTestCase
 {
   protected void setUp () {
     super.setUp()

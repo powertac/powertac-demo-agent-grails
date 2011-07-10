@@ -16,7 +16,7 @@ class GameStateService
     return currentStateType
   }
 
-  def setState(GameStateType stateType) {
+  def setState (GameStateType stateType) {
     GameState currentState = GameState.get(GameState.SINGLETON_ID)
     if (currentState) {
       currentState.state = stateType
@@ -24,5 +24,4 @@ class GameStateService
       log.error("setState - GameState has not been initialized!")
     }
   }
-
 }
