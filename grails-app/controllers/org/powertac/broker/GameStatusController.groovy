@@ -21,7 +21,7 @@ class GameStatusController
   }
 
   def getCashBalance = {
-    render cashPositionService.getCashPosition(ConfigurationHolder.config.powertac.username)
+    render sprintf('\$%.2f', cashPositionService.getCashPosition(ConfigurationHolder.config.powertac.username))
   }
 
   def pauseAction = {

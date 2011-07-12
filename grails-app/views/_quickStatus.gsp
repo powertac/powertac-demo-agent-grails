@@ -6,16 +6,14 @@
        <g:remoteFunction action="getGameState" controller="gameStatus"
                          update="gameStatus" onSuccess="updatePauseState();"/>
     }
-    /*
+
     function updateBalance() {
       <g:remoteFunction action="getCashBalance" controller="gameStatus"
                         update="cashBalance"/>
     }
 
     setInterval(updateBalance, 5000);
-    */
     setInterval(updateStatus, 1000);
-
 
     var request = 'NONE';
     function updatePauseState() {
@@ -63,10 +61,10 @@
   <img src="${resource(dir: 'images', file: 'spinner.gif')}"
        alt="${message(code: 'spinner.alt', default: 'Loading...')}"/>
   </div><br/>
-  <!-- Cash: <div id='cashBalance'>
+  Cash: <div id='cashBalance'>
     <img src="${resource(dir: 'images', file: 'spinner.gif')}"
          alt="${message(code: 'spinner.alt', default: 'Loading...')}"/>
-  </div><br/>  -->
+  </div><br/>
   <div id='pauseAction'>
     <input type='button' id='pauseActionButton' value='Request Pause'/>
   </div>
