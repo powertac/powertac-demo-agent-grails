@@ -46,11 +46,10 @@
         }
 
         $.post("${createLink(controller:'gameStatus',action:'pauseAction')}",
-               { request: request },
                function(response) {
                 $('#pauseActionStatus').html(response);
                },
-               'json');
+               'html');
          $('#pauseActionStatus').html('Request submitted')
       })
   });

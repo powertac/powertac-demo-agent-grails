@@ -19,29 +19,35 @@ package org.powertac.broker.infrastructure.messaging
 import org.apache.commons.logging.LogFactory
 import org.powertac.common.MessageConverter
 
-class XMLMessageReceiver {
+class XMLMessageReceiver
+{
   private static final log = LogFactory.getLog(this)
 
   MessageListenerRegistrar messageListenerRegistrar
   MessageConverter messageConverter
 
-  def onMessage(String xml) {
+  def onMessage (String xml) {
     log.debug("onMessage(String) - start received\n${xml}")
-    def obj = messageConverter.fromXML(xml)
-    log.debug("onMessage(String) - converted to ${obj?.class.name}")
-    def listeners = messageListenerRegistrar.getAssignableRegistrations(obj.class)
+    try {
+      def obj = messageConverter.fromXML(xml)
+      log.debug("onMessage(String) - converted to ${obj?.class.name}")
+      def listeners = messageListenerRegistrar.getAssignableRegistrations(obj.class)
 
-    if (!listeners?.size()) {
-      log.info("No listener for ${obj.class.name} yet")
-    } else {
-      try {
-        listeners?.each { listener ->
-          listener.onMessage(obj)
+      if (!listeners?.size()) {
+        log.info("No listener for ${obj.class.name} yet")
+      } else {
+        try {
+          listeners?.each { listener ->
+            listener.onMessage(obj)
+          }
+        } catch (e) {
+          log.error("Failed to process incoming xml message:\n${xml}\n", e)
         }
-      } catch (e) {
-        log.error("Failed to process incoming xml message:\n${xml}\n", e)
       }
+    } catch (e) {
+      log.error("onMessage(String): failed to convert ${xml[0..5]}", e)  zmz
     }
+
     log.debug("onMessage(String) - end")
   }
 }
