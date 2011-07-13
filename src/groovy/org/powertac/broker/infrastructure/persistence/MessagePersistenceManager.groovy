@@ -82,16 +82,15 @@ class MessagePersistenceManager
 
     def dbCp = CashPosition.findByBroker(cp.broker)
     if (dbCp) {
-      log.debug("save(CashPosition) - found with version ${dbCp.version}")
+      log.debug("save(CashPosition - found in db")
       cp.id = dbCp.id
       cp.version = dbCp.version
-      cp.merge()
+      cp.merge(flush: true)
     } else {
-      log.debug("save(CashPosition) - not found, saving as new")
+      log.debug("save(CashPosition - NOT found in db")
       cp.id = null
       cp.save(flush: true)
     }
-
     log.debug("save(CashPosition) - XXXX broker ${cp?.broker?.username} has ${cp?.balance}")
 
     log.debug("save(CashPosition) - end")
@@ -219,6 +218,10 @@ class MessagePersistenceManager
   }
 
   def save (BalancingTransaction bt) {
+    log.debug("save(BalancingTransaction) - not yet implemented")
+  }
 
+  def save (DistributionTransaction dt) {
+    log.debug("save(DistributionTransaction) - not yet implemented")
   }
 }

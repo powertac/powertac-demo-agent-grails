@@ -59,7 +59,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   def gameStateService
 
   def shoutRequestService
-  def time
+
 
   def applicationContext
   def grailsApplication
@@ -118,6 +118,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     setTimeParameters()
 
     // Start up the clock at the correct time
+    startTime = start
     timeService.start = start
     timeService.updateTime()
 
@@ -135,8 +136,15 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
 
   def startTimer (start) {
     def trigger = quartzScheduler.getTrigger('default', 'default')
-
     log.debug("startTimer - [jobName:${trigger?.jobName},jobGroup:${trigger?.jobGroup}]")
+
+    // Only for resume
+    if (startTime < start) {
+      long originalNextTick = computeNextTickTime()
+      long actualNextTick = new Date().time
+      startTime += actualNextTick - originalNextTick;
+      timeService.setStart(start);
+    }
 
     if (trigger) {
       trigger.repeatInterval = timeslotMillis / competition.simulationRate
@@ -147,6 +155,16 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
           trigger)
     }
   }
+
+
+  private long computeNextTickTime ()
+  {
+    long simTime = timeService.currentTime.millis;
+    long nextSimTime = simTime + timeService.modulo;
+    long nextTick = startTime + (nextSimTime - timeService.base) / timeService.rate
+    return nextTick;
+  }
+
 
   def pauseTimer () {
     def trigger = quartzScheduler.getTrigger('default', 'default')
