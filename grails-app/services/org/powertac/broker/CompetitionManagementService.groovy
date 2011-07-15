@@ -34,6 +34,7 @@ import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import org.powertac.broker.api.PauseActionType
 
 class CompetitionManagementService implements MessageListenerWithAutoRegistration, ApplicationContextAware
 {
@@ -57,6 +58,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   def jmsManagementService
   def messageReceiver
   def gameStateService
+  def pauseActionStateService
 
   def shoutRequestService
 
@@ -70,6 +72,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   def initialize (loginResponseCmd) {
     GameState.withTransaction {
       GameState.initialize()
+      PauseActionState.initialize()
     }
 
     // Generate broker URL and set it. Connection will be established automatically.
@@ -146,8 +149,6 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
    */
   void start (long start) {
     log.debug("start - start")
-
-    GameState.initialize()
 
     logService.start()
 
@@ -304,6 +305,8 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     log.debug("onMessage(SimStart) - start")
 
     gameStateService.setState(GameStateType.RUNNING)
+    pauseActionStateService.updateState()
+
     this.start(simStart.start.millis)
 
     log.debug("onMessage(SimStart) - end")
@@ -313,6 +316,8 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     log.debug("onMessage(SimEnd) - start")
 
     gameStateService.setState(GameStateType.STOPPED)
+    pauseActionStateService.updateState()
+
     this.stop()
 
     log.debug("onMessage(SimEnd) - end")
@@ -328,6 +333,8 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     log.debug("onMessage(SimPause) - start")
 
     gameStateService.setState(GameStateType.PAUSED)
+    pauseActionStateService.updateState()
+
     pauseTimer()
 
     log.debug("onMessage(SimPause) - end : [state:${gameStateService.state}")
@@ -337,6 +344,8 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     log.debug("onMessage(SimResume) - start")
 
     gameStateService.setState(GameStateType.RUNNING)
+    pauseActionStateService.updateState()
+
     startTimer(sr.start.millis)
     log.debug("onMessage(SimResume) - end : [state:${gameStateService.state}")
   }

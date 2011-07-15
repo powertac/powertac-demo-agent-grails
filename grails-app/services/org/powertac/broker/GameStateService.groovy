@@ -23,5 +23,7 @@ class GameStateService
     } else {
       log.error("setState - GameState has not been initialized!")
     }
+
+
   }
 }

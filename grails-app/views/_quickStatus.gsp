@@ -12,46 +12,40 @@
                         update="cashBalance"/>
     }
 
+    function updatePauseState() {
+      <g:remoteFunction action="getPauseActionState" controller="gameStatus"
+                        onSuccess="updatePauseActionButton(data)"/>
+    }
+
     setInterval(updateBalance, 5000);
     setInterval(updateStatus, 1000);
 
     var request = 'NONE';
-    function updatePauseState() {
-      var state = $('#gameStatus').html()
-
-      if (state == 'STOPPED') {
+    function updatePauseActionButton(state) {
+      if (state == 'NONE' || state == 'RESUME_REQUESTED') {
         $('#pauseActionButton').val('Request Pause');
-      } else if (state == 'RUNNING') {
-        if (request == 'RESUME') {
-          request = 'NONE'
-          $('#pauseActionStatus').html(' ')
-        }
-        $('#pauseActionButton').val('Request Pause');
-      } else if (state == 'PAUSED') {
-        if (request == 'PAUSE') {
-          request = 'NONE'
-          $('#pauseActionStatus').html(' ')
-        }
+      } else {
         $('#pauseActionButton').val('Request Resume');
       }
+
+      if (state == 'NONE' || state == 'PAUSE_ACCEPTED') {
+        $('#pauseActionStatus').html(' ')
+      }
+
+      $('#debug').html(state)
     }
 
     $('#pauseActionButton').click(
       function pauseAction(e) {
-        var requestTxt = $('#pauseActionButton').val()
-        if (requestTxt == 'Request Resume') {
-          request = 'RESUME'
-        } else {
-          request = 'PAUSE'
-        }
-
         $.post("${createLink(controller:'gameStatus',action:'pauseAction')}",
                function(response) {
                 $('#pauseActionStatus').html(response);
                },
                'html');
-         $('#pauseActionStatus').html('Request submitted')
-      })
+      }
+    )
+
+
   });
 </g:javascript>
 
@@ -68,4 +62,5 @@
     <input type='button' id='pauseActionButton' value='Request Pause'/>
   </div>
   <div id='pauseActionStatus'></div>
+  <div style="display: none;" id='debug'></div>
 </div>

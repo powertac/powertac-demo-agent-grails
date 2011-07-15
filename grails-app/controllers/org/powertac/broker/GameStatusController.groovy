@@ -1,24 +1,25 @@
 package org.powertac.broker
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.powertac.common.command.SimResume
+import org.powertac.broker.api.PauseActionType
+import org.powertac.common.Broker
 import org.powertac.common.msg.PauseRequest
 import org.powertac.common.msg.PauseRelease
-import org.powertac.common.Broker
-import org.apache.activemq.transport.stomp.Stomp.Headers.Send
-import org.powertac.broker.api.GameStateType
 
 class GameStatusController
 {
   def gameStateService
+  def pauseActionStateService
   def cashPositionService
   def jmsManagementService
   def connectionService
 
-  def index = { }
-
   def getGameState = {
     render gameStateService.state
+  }
+
+  def getPauseActionState = {
+    render pauseActionStateService.state
   }
 
   def getCashBalance = {
@@ -30,12 +31,19 @@ class GameStatusController
     if (connectionService.isConnected()) {
       def request
       def broker = new Broker(username: ConfigurationHolder.config.powertac.username)
-      if (gameStateService.state == GameStateType.PAUSED) {
-        request = new PauseRelease(broker: broker)
-      } else {
+      def pauseStateType = pauseActionStateService.state
+      def newPauseStateType = PauseActionType.NONE
+
+      if (pauseStateType == PauseActionType.NONE
+          || pauseStateType == PauseActionType.RESUME_REQUESTED) {
         request = new PauseRequest(broker: broker)
+        newPauseStateType = PauseActionType.PAUSE_REQUESTED
+      } else {
+        request = new PauseRelease(broker: broker)
+        newPauseStateType = PauseActionType.RESUME_REQUESTED
       }
 
+      pauseActionStateService.setState(newPauseStateType)
       jmsManagementService.send(request)
       msg = "${request.class.simpleName} is submitted"
     } else {
