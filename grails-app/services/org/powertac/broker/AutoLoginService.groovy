@@ -38,11 +38,11 @@ class AutoLoginService
             apiKey: ConfigurationHolder.config.powertac.apiKey]
         try {
           connectionService.connect(params)
-          connected = connectionService.isConnected()
         } catch (e) {
           log.info("Failed to connect to server: ${e.message}")
         }
       }
+      connected = connectionService.isConnected()
     }
   }
 }

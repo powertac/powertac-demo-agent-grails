@@ -13,6 +13,8 @@ class JmsManagementService {
   def transactionManager
   def messageListenerRegistrar
 
+  def listenerContainerMap = [:]
+
   MessageConverter messageConverter
 
   def registerBrokerMessageListener(String destinationName, javax.jms.MessageListener listener) {
@@ -25,11 +27,34 @@ class JmsManagementService {
     container.setSessionTransacted(true)
     container.afterPropertiesSet()
     container.start()
+
+    listenerContainerMap.put(listener, container)
+
     log.debug("registerBrokerMessageListener - end")
+  }
+
+  def unregisterBrokerMessageListener(listener) {
+    DefaultMessageListenerContainer container =  listenerContainerMap.get(listener)
+    if (container) {
+      if (container.isActive()) {
+        log.debug("unregisterBrokerMessageListener - shutting down container for ${listener.class.simpleName}")
+        container?.shutdown()
+      } else {
+        log.info("unregisterBrokerMessageListener - container for ${listener.class.simpleName} is not active")
+      }
+
+      listenerContainerMap.remove(listener)
+    } else {
+      log.info("unregisterBrokerMessageListener - could not find container for ${listener.class.simpleName}")
+    }
   }
 
   def register(Class messageType, MessageListener listener) {
     messageListenerRegistrar.register(messageType, listener)
+  }
+
+  def unregister(Class messageType, MessageListener listener) {
+    messageListenerRegistrar.unregister(messageType, listener)
   }
 
   /**

@@ -33,11 +33,14 @@ class MessageListenerRegistrar {
     listeners << listener
   }
 
-  public MessageListener unregister(Class clazz, MessageListener listener) {
+  public boolean unregister(Class clazz, MessageListener listener) {
     def listeners = registrations.get(clazz)
-    def foundListener = null
+    def foundListener = false
     if (listeners) {
       foundListener = listeners.remove(listener)
+      if (listeners.empty) {
+        registrations.remove(clazz)
+      }
     }
 
     return foundListener

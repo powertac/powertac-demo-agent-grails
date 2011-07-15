@@ -75,6 +75,10 @@ class ConnectionService
     }
   }
 
+  def disconnect() {
+
+  }
+
   def isConnected() {
     competitionManagementService.isConnected()
   }

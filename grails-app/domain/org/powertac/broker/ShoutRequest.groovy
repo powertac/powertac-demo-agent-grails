@@ -6,8 +6,6 @@ import org.powertac.common.enumerations.ProductType
 
 class ShoutRequest
 {
-  def timeService
-
   boolean active
 
   /** the product that should be bought or sold    */

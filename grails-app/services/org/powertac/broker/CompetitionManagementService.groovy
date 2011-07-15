@@ -68,6 +68,10 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   String dumpFilePrefix = (ConfigurationHolder.config.powertac?.dumpFilePrefix) ?: "logs/PowerTAC-dump-"
 
   def initialize (loginResponseCmd) {
+    GameState.withTransaction {
+      GameState.initialize()
+    }
+
     // Generate broker URL and set it. Connection will be established automatically.
     setBrokerUrl(loginResponseCmd.serverAddress)
     jmsManagementService.registerBrokerMessageListener(loginResponseCmd.queueName, messageReceiver)
@@ -84,17 +88,44 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
 
     def phaseClassMap = applicationContext.getBeansOfType(TimeslotPhaseProcessorWithAutoRegistration)
     phaseClassMap.each { clazz, processor ->
-      def logMsg = "registering ${clazz} with TimeSlotPhaseService"
+      def logMsg = "registering ${clazz} with TimeSlotPhaseService for phase"
       def phases = processor.phases
       phases?.each { phase ->
         timeslotPhaseService.registerTimeslotPhase(processor, phase)
       }
+      log.info("${logMsg} ${phases?.join(',')}")
     }
   }
 
+  def uninitialize() {
+    jmsManagementService.unregisterBrokerMessageListener(messageReceiver)
+
+    def msgClassMap = applicationContext.getBeansOfType(MessageListenerWithAutoRegistration)
+    msgClassMap.each { clazz, receiver ->
+      def logMsg = "unregistering ${clazz} with"
+      def msgs = receiver.messages
+      msgs?.each { message ->
+        jmsManagementService.unregister(message, receiver)
+      }
+      log.info("${logMsg} ${msgs.collect { it.simpleName }?.join(',')}")
+    }
+
+    def phaseClassMap = applicationContext.getBeansOfType(TimeslotPhaseProcessorWithAutoRegistration)
+    phaseClassMap.each { clazz, processor ->
+      def logMsg = "unregistering ${clazz} with TimeSlotPhaseService"
+      def phases = processor.phases
+      phases?.each { phase ->
+        timeslotPhaseService.unregisterTimeslotPhase(processor, phase)
+      }
+      log.info("${logMsg} ${phases?.join(',')}")
+    }
+    setBrokerUrl('')
+  }
+
+
   def isConnected () {
     def brokerUrl = getBrokerUrl()
-    brokerUrl != null && !brokerUrl.isEmpty()
+    brokerUrl != null && !brokerUrl.empty
   }
 
   def getBrokerUrl () {
@@ -102,7 +133,10 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   }
 
   def setBrokerUrl (url) {
-    def completeUrl = url + ConfigurationHolder.config.powertac.brokerUrlOpts
+    def completeUrl = url
+    if (url != null && !url.empty) {
+      completeUrl += ConfigurationHolder.config.powertac.brokerUrlOpts
+    }
     log.debug("setBrokerUrl: completeUrl:${completeUrl}")
     jmsConnectionFactory.targetConnectionFactory.brokerURL = completeUrl
   }
@@ -112,6 +146,8 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
    */
   void start (long start) {
     log.debug("start - start")
+
+    GameState.initialize()
 
     logService.start()
 
@@ -213,6 +249,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     running = false
     pauseTimer()
 
+
     File dumpfile = new File("${dumpFilePrefix}${competitionId}.xml")
 
     DataExport de = new DataExport()
@@ -225,6 +262,9 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
     DbCreate dc = new DbCreate()
     dc.dataSource = dataSource
     dc.create(grailsApplication)
+
+    // disconnect
+    uninitialize()
 
   }
 

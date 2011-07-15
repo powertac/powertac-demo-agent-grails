@@ -34,7 +34,7 @@ class TimeslotPhaseService
     log.debug("registerTimeslotPhase - end")
   }
 
-  void unregisterTimeslotPhase (TimeslotPhaseProcessor thing, int phase) {
+  boolean unregisterTimeslotPhase (TimeslotPhaseProcessor thing, int phase) {
     if (phase <= 0 || phase > timeslotPhaseCount) {
       def msg = "phase ${phase} out of range (1..${timeslotPhaseCount})"
       throw new IllegalArgumentException(msg)
@@ -43,9 +43,10 @@ class TimeslotPhaseService
     }
   }
 
-  void unregisterTimeslotPhase (TimeslotPhaseProcessor thing) {
+  boolean unregisterTimeslotPhase (TimeslotPhaseProcessor thing) {
+    boolean found = false
     phaseRegistrations.each { fnList ->
-      fnList.remove(thing)
+      found = fnList.remove(thing) ?: found
     }
   }
 
