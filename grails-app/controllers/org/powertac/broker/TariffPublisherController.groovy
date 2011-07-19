@@ -38,7 +38,7 @@ class TariffPublisherController {
     }
     else if (tariffSpec.powerType == PowerType.PRODUCTION) {
       Rate rate = new Rate()
-      rate.setValue(0.05)
+      rate.setValue(-0.05)
       rate.save()
       tariffSpec.addToRates(rate)
     }
