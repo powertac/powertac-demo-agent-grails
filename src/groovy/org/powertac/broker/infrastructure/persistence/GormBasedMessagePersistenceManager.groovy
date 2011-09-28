@@ -6,7 +6,7 @@ import org.powertac.common.msg.TariffStatus
 import org.powertac.common.msg.TimeslotUpdate
 import org.powertac.common.*
 
-class MessagePersistenceManager
+class GormBasedMessagePersistenceManager
 {
   private static final log = LogFactory.getLog(this)
   private long timeslotMillis

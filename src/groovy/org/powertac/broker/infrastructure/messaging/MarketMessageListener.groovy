@@ -1,15 +1,17 @@
 package org.powertac.broker.infrastructure.messaging
 
 import org.apache.commons.logging.LogFactory
-import org.powertac.broker.infrastructure.persistence.MessagePersistenceManager
+
 import org.powertac.broker.interfaces.MessageListenerWithAutoRegistration
 import org.powertac.common.command.*
+import org.powertac.broker.infrastructure.persistence.GormBasedMessagePersistenceManager
 
 class MarketMessageListener implements MessageListenerWithAutoRegistration
 {
   private static final log = LogFactory.getLog(this)
 
-  MessagePersistenceManager messagePersistenceManager
+  def messagePersistenceManager
+
   // TODO: retrieve all classes within cmd package programmatically
   static final def transientClazz = [SimEnd, ArrayList, CustomerBootstrapData,
       CustomerList, ErrorCmd, SimStart, SimPause, SimResume]

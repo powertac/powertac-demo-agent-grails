@@ -27,7 +27,7 @@ beans = {
     messageListenerRegistrar = messageListenerRegistrar
   }
 
-  messagePersistenceManager(org.powertac.broker.infrastructure.persistence.MessagePersistenceManager)
+  messagePersistenceManager(org.powertac.broker.infrastructure.persistence.GormBasedMessagePersistenceManager)
 
   marketMessageListener(org.powertac.broker.infrastructure.messaging.MarketMessageListener)  { bean ->
     messagePersistenceManager = messagePersistenceManager
