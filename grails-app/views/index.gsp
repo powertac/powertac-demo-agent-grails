@@ -1,3 +1,4 @@
+<%@ page import="org.powertac.broker.CompetitionManagementService" %>
 <html>
     <head>
         <title>Welcome to Grails</title>
@@ -49,6 +50,19 @@
             margin-right:20px;
         }
         </style>
+
+      <g:javascript library='jquery' plugin='jquery'/>
+      <g:javascript>
+        $(document).ready(function() {
+
+          function updateStatus() {
+             <g:remoteFunction action="getConnectionStatusText" controller="connectionController"
+                               update="connectionStatus" />
+          }
+
+          setInterval(updateStatus, 1000);
+        });
+      </g:javascript>
     </head>
     <body>
         <div id="nav">
@@ -81,12 +95,22 @@
             </div>
         </div>
         <div id="pageBody">
-            <h1>Welcome to Grails</h1>
-            <p>Congratulations, you have successfully started your first Grails application! At the moment
-            this is the default page, feel free to modify it to either redirect to a controller or display whatever
-            content you may choose. Below is a list of controllers that are currently deployed in this application,
-            click on each to execute its default action:</p>
-
+            <h1>Welcome to PowerTAC Demo Agent</h1>
+            <div>
+              This agent is currently
+              <g:set var="competitionManagementService" value="${applicationContext.getBean('competitionManagementService')}"/>
+              <span id="connectionStatus">
+                <g:if test="${competitionManagementService.isConnected()}">
+                connected to ${competitionManagementService.getBrokerUrl()}.
+                </g:if>
+                <g:else>not connected.</g:else>
+              </span>
+            </div>
+            <div>
+              <p>
+              Below is a list of controllers that are currently deployed in this application,
+              click on each to execute its default action:   </p>
+            </div>
             <div id="controllerList" class="dialog">
                 <h2>Available Controllers:</h2>
                 <ul>

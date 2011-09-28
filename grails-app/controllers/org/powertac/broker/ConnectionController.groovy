@@ -42,4 +42,12 @@ class ConnectionController {
     }
     log.debug("connect - end")
   }
+
+  def getConnectionStatusText = {
+    if (competitionManagementService.isConnected()) {
+      render "connected to ${competitionManagementService.brokerUrl}"
+    } else {
+      render "not connected"
+    }
+  }
 }

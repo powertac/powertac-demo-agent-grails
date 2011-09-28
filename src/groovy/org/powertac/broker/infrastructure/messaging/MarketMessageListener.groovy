@@ -28,4 +28,10 @@ class MarketMessageListener implements MessageListenerWithAutoRegistration
     }
     log.debug("onMessage(${msg.class.name}) - end")
   }
+
+  def onMessage (CustomerBootstrapData cbd) {
+    log.debug("onMessage(CustomerBootstrapData) - start")
+    messagePersistenceManager.save(cbd.customer)
+    log.debug("onMessage(CustomerBootstrapData) - end")
+  }
 }

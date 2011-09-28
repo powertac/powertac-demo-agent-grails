@@ -55,12 +55,21 @@ grails.spring.bean.packages = []
 environments {
   production {
     grails.serverURL = "http://www.powertac.org"
+
+  /* Local server - it may happen that you just want to test your broker without a running server. ActiveMQ
+         tries to connect to the server on startup and blocks the app unless it is connected.
+          startupMaxReconnectAttempts=1 reduces the reconnection attempts at startup
+  */
+    //powertac.server = 'http://wolf-08.fbk.eur.nl:8080/powertac-server/'
+    powertac.server = 'http://xlarge.rsm.nl:8080/powertac-server/'
   }
   development {
     grails.serverURL = "http://localhost:8080/${appName}"
+    powertac.server = 'http://localhost:8080/powertac-server/'
   }
   test {
     grails.serverURL = "http://localhost:8080/${appName}"
+    powertac.server = 'http://localhost:8080/powertac-server/'
   }
 
 }
@@ -114,13 +123,6 @@ powertac {
   /* Broker login configuration */
   username = 'grailsDemo'
   apiKey = '5d064dd7-1ec9-4a98-bece-2ca09b03e367'
-
-  /* Local server - it may happen that you just want to test your broker without a running server. ActiveMQ
-         tries to connect to the server on startup and blocks the app unless it is connected.
-          startupMaxReconnectAttempts=1 reduces the reconnection attempts at startup
-  */
-  //server = 'http://xlarge.rsm.nl:8080/powertac-server/'
-  server = 'http://localhost:8080/powertac-server/'
 
   brokerUrlOpts = '?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0'
 
