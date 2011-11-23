@@ -123,10 +123,9 @@ powertac {
   /* Broker login configuration */
   username = 'grailsDemo'
   apiKey = '5d064dd7-1ec9-4a98-bece-2ca09b03e367'
-
-  brokerUrlOpts = '?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0'
-
-  broker.login.mode = 'auto'
+//  brokerUrlOpts = '?timeout=3000&jms.redeliveryPolicy.maximumRedeliveries=0'
+  brokerUrlOpts = '?jms.redeliveryPolicy.maximumRedeliveries=0'
+  broker.login.mode = 'manual'
 }
 
 // Added by the powertac-common plugin:

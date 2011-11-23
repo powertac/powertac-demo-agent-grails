@@ -4,9 +4,6 @@ import grails.converters.XML
 import groovyx.net.http.ContentType
 import groovyx.net.http.RESTClient
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.powertac.common.command.LoginRequestCmd
-import org.powertac.common.command.LoginResponseCmd
-import org.powertac.common.command.LoginResponseCmd.StatusCode
 import org.powertac.common.Tariff.State
 import org.powertac.broker.infrastructure.messaging.MessageReceiver
 import org.powertac.broker.exceptions.InvalidParameterException

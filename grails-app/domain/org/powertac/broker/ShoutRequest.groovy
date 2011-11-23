@@ -1,8 +1,8 @@
 package org.powertac.broker
 
 import org.powertac.common.Competition
-import org.powertac.common.enumerations.BuySellIndicator
 import org.powertac.common.enumerations.ProductType
+import org.powertac.common.Shout.OrderType
 
 class ShoutRequest
 {
@@ -15,7 +15,7 @@ class ShoutRequest
   int endTimeslot = Integer.MAX_VALUE
 
   /** flag that indicates if this shout is a buy or sell order    */
-  BuySellIndicator buySellIndicator
+  OrderType buySellIndicator
 
   /** the product quantity to buy or sell    */
   BigDecimal quantity

@@ -2,8 +2,8 @@ package org.powertac.broker
 
 import org.springframework.jms.listener.DefaultMessageListenerContainer
 
-import org.powertac.common.MessageConverter
 import org.powertac.broker.interfaces.MessageListener
+import org.powertac.common.XMLMessageConverter
 
 class JmsManagementService {
 
@@ -12,10 +12,11 @@ class JmsManagementService {
   def jmsService
   def transactionManager
   def messageListenerRegistrar
+	def serverQueueName = "server.inputQueue"
 
   def listenerContainerMap = [:]
 
-  MessageConverter messageConverter
+  XMLMessageConverter messageConverter
 
   def registerBrokerMessageListener(String destinationName, javax.jms.MessageListener listener) {
     log.debug("registerBrokerMessageListener - start [creating listener container for ${destinationName}]")
@@ -57,6 +58,10 @@ class JmsManagementService {
     messageListenerRegistrar.unregister(messageType, listener)
   }
 
+	def initialize(serverQueueName) {
+		this.serverQueueName = serverQueueName
+	}
+
   /**
    * Sends an object to the server. The objects automatically gets converted to a XML document.
    */
@@ -66,6 +71,7 @@ class JmsManagementService {
     def xml = messageConverter.toXML(message)
     log.debug("convert to xml: \n${xml}")
 
-    jmsService.send("server.inputQueue", messageConverter.toXML(message))
+	  log.debug("sending JMS message to ${serverQueueName}")
+    jmsService.send(serverQueueName, messageConverter.toXML(message))
   }
 }

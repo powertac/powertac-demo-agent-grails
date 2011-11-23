@@ -34,5 +34,11 @@ beans = {
   }
 
   tariffNegotiator(org.powertac.broker.core.tariffnegotiator.DemoTariffNegotiator)
-
+  springApplicationContext(org.powertac.common.spring.SpringApplicationContext)
+  messageConverter(org.powertac.common.XMLMessageConverter)
+  brokerRepo(org.powertac.common.repo.BrokerRepo)
+  customerRepo(org.powertac.common.repo.CustomerRepo)
+	timeslotRepo(org.powertac.common.repo.TimeslotRepo)
+	tariffRepo(org.powertac.common.repo.TariffRepo)
+  timeService(org.powertac.common.TimeService)
 }

@@ -3,8 +3,13 @@ package org.powertac.broker.infrastructure.messaging
 import org.apache.commons.logging.LogFactory
 
 import org.powertac.broker.interfaces.MessageListenerWithAutoRegistration
-import org.powertac.common.command.*
-import org.powertac.broker.infrastructure.persistence.GormBasedMessagePersistenceManager
+import org.powertac.common.msg.CustomerBootstrapData
+import org.powertac.common.msg.SimEnd
+import org.powertac.common.msg.SimStart
+import org.powertac.common.msg.SimPause
+import org.powertac.common.msg.SimResume
+import org.powertac.common.msg.BrokerAccept
+import org.powertac.common.IdGenerator
 
 class MarketMessageListener implements MessageListenerWithAutoRegistration
 {
@@ -14,7 +19,7 @@ class MarketMessageListener implements MessageListenerWithAutoRegistration
 
   // TODO: retrieve all classes within cmd package programmatically
   static final def transientClazz = [SimEnd, ArrayList, CustomerBootstrapData,
-      CustomerList, ErrorCmd, SimStart, SimPause, SimResume]
+     SimStart, SimPause, SimResume, BrokerAccept]
 
   def getMessages () {
     [Object]
@@ -34,4 +39,10 @@ class MarketMessageListener implements MessageListenerWithAutoRegistration
     messagePersistenceManager.save(cbd.customer)
     log.debug("onMessage(CustomerBootstrapData) - end")
   }
+
+	def onMessage (BrokerAccept brokerAccept) {
+		log.debug("onMessage(BrokerAccept) - start")
+		IdGenerator.setPrefix(brokerAccept.prefix)
+		log.debug("onMessage(BrokerAccept) - end")
+	}
 }

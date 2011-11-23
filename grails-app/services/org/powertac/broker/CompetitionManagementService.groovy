@@ -16,8 +16,6 @@
 
 package org.powertac.broker
 
-import greenbill.dbstuff.DataExport
-import greenbill.dbstuff.DbCreate
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.joda.time.Instant
 import org.powertac.broker.api.GameStateType
@@ -25,16 +23,18 @@ import org.powertac.broker.interfaces.MessageListenerWithAutoRegistration
 import org.powertac.broker.interfaces.TimeslotPhaseProcessorWithAutoRegistration
 import org.powertac.common.Competition
 import org.powertac.common.TimeService
-import org.powertac.common.command.SimEnd
-import org.powertac.common.command.SimPause
-import org.powertac.common.command.SimResume
-import org.powertac.common.command.SimStart
 import org.powertac.common.msg.TimeslotUpdate
 import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.powertac.broker.api.PauseActionType
+import org.powertac.common.msg.SimStart
+import org.powertac.common.msg.SimEnd
+import org.powertac.common.msg.SimPause
+import org.powertac.common.msg.SimResume
+import org.powertac.common.msg.BrokerAuthentication
+import org.powertac.common.Broker
 
 class CompetitionManagementService implements MessageListenerWithAutoRegistration, ApplicationContextAware
 {
@@ -77,7 +77,8 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
 
     // Generate broker URL and set it. Connection will be established automatically.
     setBrokerUrl(loginResponseCmd.serverAddress)
-    jmsManagementService.registerBrokerMessageListener(loginResponseCmd.queueName, messageReceiver)
+	jmsManagementService.initialize(loginResponseCmd.serverQueueName)
+    jmsManagementService.registerBrokerMessageListener(loginResponseCmd.brokerQueueName, messageReceiver)
 
     def msgClassMap = applicationContext.getBeansOfType(MessageListenerWithAutoRegistration)
     msgClassMap.each { clazz, receiver ->
@@ -98,6 +99,10 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
       }
       log.info("${logMsg} ${phases?.join(',')}")
     }
+
+	  BrokerAuthentication ba = new BrokerAuthentication()
+	  ba.setBroker(new Broker(ConfigurationHolder.config.powertac.username))
+	  jmsManagementService.send(ba)
   }
 
   def uninitialize() {
@@ -249,20 +254,6 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   void shutDown () {
     running = false
     pauseTimer()
-
-
-    File dumpfile = new File("${dumpFilePrefix}${competitionId}.xml")
-
-    DataExport de = new DataExport()
-    de.dataSource = dataSource
-    de.export(dumpfile, 'powertac')
-
-    logService.stop()
-
-    // refresh DB
-    DbCreate dc = new DbCreate()
-    dc.dataSource = dataSource
-    dc.create(grailsApplication)
 
     // disconnect
     uninitialize()

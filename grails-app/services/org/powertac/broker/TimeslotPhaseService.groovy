@@ -1,7 +1,7 @@
 package org.powertac.broker
 
-import org.powertac.common.interfaces.TimeslotPhaseProcessor
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.powertac.broker.interfaces.TimeslotPhaseProcessor
 
 class TimeslotPhaseService
 {

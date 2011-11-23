@@ -17,14 +17,14 @@
 package org.powertac.broker.infrastructure.messaging
 
 import org.apache.commons.logging.LogFactory
-import org.powertac.common.MessageConverter
+import org.powertac.common.XMLMessageConverter
 
 class XMLMessageReceiver
 {
   private static final log = LogFactory.getLog(this)
 
   MessageListenerRegistrar messageListenerRegistrar
-  MessageConverter messageConverter
+  XMLMessageConverter messageConverter
 
   def onMessage (String xml) {
     log.debug("onMessage(String) - start received\n${xml}")

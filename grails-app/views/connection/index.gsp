@@ -17,7 +17,9 @@
       <tr><td colspan="2"><div align="center"><b>Connect to Power TAC Server</b></div></td></tr>
       <tr>
         <td>Server:</td>
-        <td><input type="text" name="server" value="${server}" size="75"/></td>
+        <td><input type="text" name="server" value="${server}" size="75"/><br/>
+             <g:checkBox name="bypassAuthentication"/> Bypass Web Authentication
+        </td>
       </tr>
       <tr>
         <td></td>
