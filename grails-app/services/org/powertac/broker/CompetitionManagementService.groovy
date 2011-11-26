@@ -21,20 +21,14 @@ import org.joda.time.Instant
 import org.powertac.broker.api.GameStateType
 import org.powertac.broker.interfaces.MessageListenerWithAutoRegistration
 import org.powertac.broker.interfaces.TimeslotPhaseProcessorWithAutoRegistration
+import org.powertac.common.Broker
 import org.powertac.common.Competition
 import org.powertac.common.TimeService
-import org.powertac.common.msg.TimeslotUpdate
-import org.quartz.JobDetail
+import org.powertac.common.TimedAction
 import org.quartz.SimpleTrigger
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
-import org.powertac.broker.api.PauseActionType
-import org.powertac.common.msg.SimStart
-import org.powertac.common.msg.SimEnd
-import org.powertac.common.msg.SimPause
-import org.powertac.common.msg.SimResume
-import org.powertac.common.msg.BrokerAuthentication
-import org.powertac.common.Broker
+import org.powertac.common.msg.*
 
 class CompetitionManagementService implements MessageListenerWithAutoRegistration, ApplicationContextAware
 {
@@ -48,7 +42,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   long startTime
 
   def timeslotPhaseService
-  def logService
+//  def logService
 
   def quartzScheduler
   def clockDriveJob
@@ -155,7 +149,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
   void start (long start) {
     log.debug("start - start")
 
-    logService.start()
+//    logService.start()
 
     setTimeParameters()
 
@@ -220,7 +214,11 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
    */
   void scheduleStep (long offset) {
     timeService.addAction(new Instant(timeService.currentTime.millis + offset),
-        { this.step() })
+			new TimedAction() {
+				void perform(Instant instant) {
+					this.step()
+				}
+			});
   }
 
   /**

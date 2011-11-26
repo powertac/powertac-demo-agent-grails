@@ -27,7 +27,7 @@ grails.project.dependency.resolution = {
     mavenRepo "http://repository.jboss.com/maven2/"
     mavenRepo "http://tac04.cs.umn.edu:8080/plugin/repository/everything"
 
-    flatDir name:'localRepo', dirs:'$HOME/.m2/repository'
+	  flatDir name:'localRepo', dirs:'$HOME/.m2/repository'
   }
   dependencies {
     // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.

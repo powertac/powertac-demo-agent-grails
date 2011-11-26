@@ -12,11 +12,26 @@ beans = {
     }
   }
 
+	tariffNegotiator(org.powertac.broker.core.tariffnegotiator.DemoTariffNegotiator)
+	springApplicationContext(org.powertac.common.spring.SpringApplicationContext)
+	messageConverter(org.powertac.common.XMLMessageConverter)
+	brokerRepo(org.powertac.common.repo.BrokerRepo)
+	customerRepo(org.powertac.common.repo.CustomerRepo)
+	timeslotRepo(org.powertac.common.repo.TimeslotRepo)
+	tariffRepo(org.powertac.common.repo.TariffRepo)
+	timeService(org.powertac.common.TimeService)
+	brokerRepo(org.powertac.common.repo.BrokerRepo)
+	customerRepo(org.powertac.common.repo.CustomerRepo)
+	orderbookRepo(org.powertac.common.repo.OrderbookRepo)
+	tariffRepo(org.powertac.common.repo.TariffRepo)
+	timeslotRepo(org.powertac.common.repo.TimeslotRepo)
+	weatherForecastRepo(org.powertac.common.repo.WeatherForecastRepo)
+	weatherReportRepo(org.powertac.common.repo.WeatherReportRepo)
   messageListenerRegistrar(org.powertac.broker.infrastructure.messaging.MessageListenerRegistrar)
 
   xmlMessageReceiver(org.powertac.broker.infrastructure.messaging.XMLMessageReceiver) {
     messageListenerRegistrar = messageListenerRegistrar
-    messageConverter = ref('messageConverter')
+    messageConverter = messageConverter
   }
 
   messageReceiver(org.powertac.broker.infrastructure.messaging.MessageReceiver) {
@@ -27,18 +42,17 @@ beans = {
     messageListenerRegistrar = messageListenerRegistrar
   }
 
-  messagePersistenceManager(org.powertac.broker.infrastructure.persistence.GormBasedMessagePersistenceManager)
+  messagePersistenceManager(org.powertac.broker.infrastructure.persistence.RepoBasedMessagePersistenceManager) { bean ->
+		brokerRepo = brokerRepo
+	  customerRepo = customerRepo
+	  orderbookRepo = orderbookRepo
+	  tariffRepo = tariffRepo
+		timeslotRepo = timeslotRepo
+	  weatherForecastRepo = weatherForecastRepo
+	  weatherReportRepo = weatherReportRepo
+  }
 
   marketMessageListener(org.powertac.broker.infrastructure.messaging.MarketMessageListener)  { bean ->
     messagePersistenceManager = messagePersistenceManager
   }
-
-  tariffNegotiator(org.powertac.broker.core.tariffnegotiator.DemoTariffNegotiator)
-  springApplicationContext(org.powertac.common.spring.SpringApplicationContext)
-  messageConverter(org.powertac.common.XMLMessageConverter)
-  brokerRepo(org.powertac.common.repo.BrokerRepo)
-  customerRepo(org.powertac.common.repo.CustomerRepo)
-	timeslotRepo(org.powertac.common.repo.TimeslotRepo)
-	tariffRepo(org.powertac.common.repo.TariffRepo)
-  timeService(org.powertac.common.TimeService)
 }

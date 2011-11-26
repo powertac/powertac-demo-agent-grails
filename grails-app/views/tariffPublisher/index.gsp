@@ -26,16 +26,6 @@
                 <div class="dialog">
                     <table>
                         <tbody>
-
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                  <label for="broker"><g:message code="tariffSpecification.broker.label" default="Broker" /></label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean: tariffSpecificationInstance, field: 'broker', 'errors')}">
-                                    <g:textField name="broker" value="${ConfigurationHolder.config.powertac.username}" />
-                                </td>
-                            </tr>
-
                             <tr class="prop">
                                 <td valign="top" class="name">
                                   <label for="expiration"><g:message code="tariffSpecification.expiration.label" default="Expiration" /></label>
@@ -63,14 +53,14 @@
                                 </td>
                             </tr>
 
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                  <label for="rates"><g:message code="tariffSpecification.rates.label" default="Rates" /></label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean: tariffSpecificationInstance, field: 'rates', 'errors')}">
-                                    <g:select name="rates" from="${org.powertac.common.Rate.list()}" multiple="yes" optionKey="id" size="5" value="${tariffSpecificationInstance?.rates*.id}" />
-                                </td>
-                            </tr>
+                            %{--<tr class="prop">--}%
+                                %{--<td valign="top" class="name">--}%
+                                  %{--<label for="rates"><g:message code="tariffSpecification.rates.label" default="Rates" /></label>--}%
+                                %{--</td>--}%
+                                %{--<td valign="top" class="value ${hasErrors(bean: tariffSpecificationInstance, field: 'rates', 'errors')}">--}%
+                                    %{--<g:select name="rates" from="${org.powertac.common.Rate.list()}" multiple="yes" optionKey="id" size="5" value="${tariffSpecificationInstance?.rates*.id}" />--}%
+                                %{--</td>--}%
+                            %{--</tr>--}%
 
                             <tr class="prop">
                                 <td valign="top" class="name">
