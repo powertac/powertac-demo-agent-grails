@@ -67,6 +67,11 @@ class RepoBasedMessagePersistenceManager {
 		msg
 	}
 
+	def getAll (type) {
+		def repo = repoMap.get(type)
+		repo?.values()
+	}
+
 
   def save (Object obj) {
     log.warn("I don't know how to save ${obj.class.name} message type yet")
@@ -108,6 +113,7 @@ class RepoBasedMessagePersistenceManager {
   def save (CashPosition cp) {
     log.debug("save(CashPosition) - begin")
 
+	  cp.broker.cash = cp
 		saveToRepo(cp)
 
     log.debug("save(CashPosition) - end")

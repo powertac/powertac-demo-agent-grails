@@ -4,6 +4,20 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="layout" content="main"/>
   <title>Connect to Power TAC Server</title>
+	<g:javascript library='jquery' plugin='jquery'/>
+	<g:javascript>
+  $(document).ready(function() {
+	  var checkbox = $('#bypassAuthCheckbox');
+	  var serverURL = $('#serverURL');
+		checkbox.click(function() {
+			if (checkbox.is(':checked')) {
+				serverURL.val('tcp://localhost:61616');
+			} else {
+				serverURL.val('http://localhost:8080/powertac-server/');
+			}
+    });
+  });
+	</g:javascript>
 </head>
 <body>
 <g:if test="${flash.message}">
@@ -17,8 +31,8 @@
       <tr><td colspan="2"><div align="center"><b>Connect to Power TAC Server</b></div></td></tr>
       <tr>
         <td>Server:</td>
-        <td><input type="text" name="server" value="${server}" size="75"/><br/>
-             <g:checkBox name="bypassAuthentication"/> Bypass Web Authentication
+        <td><input id="serverURL" type="text" name="server" value="${server}" size="75"/><br/>
+             <g:checkBox id="bypassAuthCheckbox" name="bypassAuthentication"/> Bypass Web Authentication
         </td>
       </tr>
       <tr>

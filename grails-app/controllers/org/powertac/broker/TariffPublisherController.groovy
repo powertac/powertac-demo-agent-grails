@@ -10,6 +10,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class TariffPublisherController {
   def tariffPublishingService
+	def messagePersistenceManager
 
   def index = {
     render(view: 'index')
@@ -35,6 +36,8 @@ class TariffPublisherController {
       Rate rate = new Rate().withValue(-0.05)
       tariffSpec.addToRate(rate)
     }
+
+	  messagePersistenceManager.saveToRepo(tariffSpec)
 
 		tariffPublishingService.publish(tariffSpec)
 		flash.message = 'Published tariffSpec'

@@ -14,6 +14,10 @@ class GameStatusController
   def jmsManagementService
   def connectionService
 
+	def index = {
+		redirect(controller: 'status')
+	}
+
   def getGameState = {
     render gameStateService.state
   }
@@ -30,16 +34,16 @@ class GameStatusController
     def msg
     if (connectionService.isConnected()) {
       def request
-      def broker = new Broker(username: ConfigurationHolder.config.powertac.username)
+      def broker = new Broker(ConfigurationHolder.config.powertac.username)
       def pauseStateType = pauseActionStateService.state
       def newPauseStateType = PauseActionType.NONE
 
       if (pauseStateType == PauseActionType.NONE
           || pauseStateType == PauseActionType.RESUME_REQUESTED) {
-        request = new PauseRequest(broker: broker)
+        request = new PauseRequest(broker)
         newPauseStateType = PauseActionType.PAUSE_REQUESTED
       } else {
-        request = new PauseRelease(broker: broker)
+        request = new PauseRelease(broker)
         newPauseStateType = PauseActionType.RESUME_REQUESTED
       }
 
