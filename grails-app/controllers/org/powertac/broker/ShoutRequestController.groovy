@@ -49,7 +49,7 @@ class ShoutRequestController
       redirect(action: "list")
     }
     else {
-      return [shoutRequestInstance: shoutRequestInstance]
+      render (view: "edit", model: [shoutRequestInstance: shoutRequestInstance])
     }
   }
 

@@ -1,11 +1,12 @@
 <%@ page import="org.powertac.broker.ShoutRequest" %>
 <html>
 <head>
+	<!-- edit page -->
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="layout" content="main"/>
   <g:set var="entityName"
          value="${message(code: 'shoutRequest.label', default: 'ShoutRequest')}"/>
-  <title><g:message code="default.list.label" args="[entityName]"/></title>
+  <title>Hello</title>
 </head>
 
 <body>

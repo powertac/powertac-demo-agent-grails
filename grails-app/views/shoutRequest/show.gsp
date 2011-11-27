@@ -67,20 +67,20 @@
 
       <tr class="prop">
         <td valign="top" class="name"><g:message
-            code="shoutRequest.buySellIndicator.label"
-            default="Buy Sell Indicator"/></td>
+            code="shoutRequest.endTimeslot.label" default="End Timeslot"/></td>
 
         <td valign="top"
-            class="value">${shoutRequestInstance?.buySellIndicator?.encodeAsHTML()}</td>
+            class="value">${fieldValue(bean: shoutRequestInstance, field: "endTimeslot")}</td>
 
       </tr>
 
       <tr class="prop">
         <td valign="top" class="name"><g:message
-            code="shoutRequest.endTimeslot.label" default="End Timeslot"/></td>
+            code="shoutRequest.buySellIndicator.label"
+            default="Buy Sell Indicator"/></td>
 
         <td valign="top"
-            class="value">${fieldValue(bean: shoutRequestInstance, field: "endTimeslot")}</td>
+            class="value">${shoutRequestInstance?.buySellIndicator?.encodeAsHTML()}</td>
 
       </tr>
 
@@ -113,14 +113,14 @@
 
       </tr>
 
-      <tr class="prop">
-        <td valign="top" class="name"><g:message
-            code="shoutRequest.product.label" default="Product"/></td>
+      %{--<tr class="prop">--}%
+        %{--<td valign="top" class="name"><g:message--}%
+            %{--code="shoutRequest.product.label" default="Product"/></td>--}%
 
-        <td valign="top"
-            class="value">${shoutRequestInstance?.product?.encodeAsHTML()}</td>
+        %{--<td valign="top"--}%
+            %{--class="value">${shoutRequestInstance?.product?.encodeAsHTML()}</td>--}%
 
-      </tr>
+      %{--</tr>--}%
 
       <tr class="prop">
         <td valign="top" class="name"><g:message

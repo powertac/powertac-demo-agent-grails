@@ -56,7 +56,7 @@
         $(document).ready(function() {
 
           function updateStatus() {
-             <g:remoteFunction action="getConnectionStatusText" controller="connectionController"
+             <g:remoteFunction action="getConnectionStatusText" controller="connection"
                                update="connectionStatus" />
           }
 

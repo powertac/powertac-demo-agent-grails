@@ -62,7 +62,7 @@ class RepoBasedMessagePersistenceManager {
 		if (id) {
 			msg = repo?.get(id)
 		} else {
-			msg = repo?.values()?.iterator().first()
+			msg = repo?.values()?.iterator().next()
 		}
 		msg
 	}
@@ -172,7 +172,8 @@ class RepoBasedMessagePersistenceManager {
 
     timeslotMillis = competition.timeslotLength * TimeService.MINUTE
 
-	  saveToRepo(competition)
+	  Competition.newInstance(competition.name).update(competition)
+	  saveToRepo(Competition.currentCompetition())
 
     log.debug("save(Competition) - end")
   }

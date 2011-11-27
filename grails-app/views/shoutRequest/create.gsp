@@ -43,19 +43,19 @@
           </td>
         </tr>
 
-        <tr class="prop">
-          <td valign="top" class="name">
-            <label for="product"><g:message code="shoutRequest.product.label"
-                                            default="Product"/></label>
-          </td>
-          <td valign="top"
-              class="value ${hasErrors(bean: shoutRequestInstance, field: 'product', 'errors')}">
-            <g:select name="product"
-                      from="${org.powertac.common.enumerations.ProductType?.values()}"
-                      keys="${org.powertac.common.enumerations.ProductType?.values()*.name()}"
-                      value="${shoutRequestInstance?.product?.name()}"/>
-          </td>
-        </tr>
+        %{--<tr class="prop">--}%
+          %{--<td valign="top" class="name">--}%
+            %{--<label for="product"><g:message code="shoutRequest.product.label"--}%
+                                            %{--default="Product"/></label>--}%
+          %{--</td>--}%
+          %{--<td valign="top"--}%
+              %{--class="value ${hasErrors(bean: shoutRequestInstance, field: 'product', 'errors')}">--}%
+            %{--<g:select name="product"--}%
+                      %{--from="${org.powertac.common.enumerations.ProductType?.values()}"--}%
+                      %{--keys="${org.powertac.common.enumerations.ProductType?.values()*.name()}"--}%
+                      %{--value="${shoutRequestInstance?.product?.name()}"/>--}%
+          %{--</td>--}%
+        %{--</tr>--}%
 
         <tr class="prop">
           <td valign="top" class="name">
@@ -66,8 +66,8 @@
           <td valign="top"
               class="value ${hasErrors(bean: shoutRequestInstance, field: 'buySellIndicator', 'errors')}">
             <g:select name="buySellIndicator"
-                      from="${org.powertac.common.enumerations.BuySellIndicator?.values()}"
-                      keys="${org.powertac.common.enumerations.BuySellIndicator?.values()*.name()}"
+                      from="${ShoutRequest.OrderType.values()}"
+                      keys="${ShoutRequest.OrderType.values()*.name()}"
                       value="${shoutRequestInstance?.buySellIndicator?.name()}"/>
           </td>
         </tr>
@@ -98,31 +98,31 @@
         </tr>
 
 
-        <tr class="prop">
-          <td valign="top" class="name">
-            <label for="executionQuantity"><g:message
-                code="shoutRequest.executionQuantity.label"
-                default="Execution Quantity"/></label>
-          </td>
-          <td valign="top"
-              class="value ${hasErrors(bean: shoutRequestInstance, field: 'executionQuantity', 'errors')}">
-            <g:textField name="executionQuantity"
-                         value="${fieldValue(bean: shoutRequestInstance, field: 'executionQuantity')}"/>
-          </td>
-        </tr>
+        %{--<tr class="prop">--}%
+          %{--<td valign="top" class="name">--}%
+            %{--<label for="executionQuantity"><g:message--}%
+                %{--code="shoutRequest.executionQuantity.label"--}%
+                %{--default="Execution Quantity"/></label>--}%
+          %{--</td>--}%
+          %{--<td valign="top"--}%
+              %{--class="value ${hasErrors(bean: shoutRequestInstance, field: 'executionQuantity', 'errors')}">--}%
+            %{--<g:textField name="executionQuantity"--}%
+                         %{--value="${fieldValue(bean: shoutRequestInstance, field: 'executionQuantity')}"/>--}%
+          %{--</td>--}%
+        %{--</tr>--}%
 
-        <tr class="prop">
-          <td valign="top" class="name">
-            <label for="executionPrice"><g:message
-                code="shoutRequest.executionPrice.label"
-                default="Execution Price"/></label>
-          </td>
-          <td valign="top"
-              class="value ${hasErrors(bean: shoutRequestInstance, field: 'executionPrice', 'errors')}">
-            <g:textField name="executionPrice"
-                         value="${fieldValue(bean: shoutRequestInstance, field: 'executionPrice')}"/>
-          </td>
-        </tr>
+        %{--<tr class="prop">--}%
+          %{--<td valign="top" class="name">--}%
+            %{--<label for="executionPrice"><g:message--}%
+                %{--code="shoutRequest.executionPrice.label"--}%
+                %{--default="Execution Price"/></label>--}%
+          %{--</td>--}%
+          %{--<td valign="top"--}%
+              %{--class="value ${hasErrors(bean: shoutRequestInstance, field: 'executionPrice', 'errors')}">--}%
+            %{--<g:textField name="executionPrice"--}%
+                         %{--value="${fieldValue(bean: shoutRequestInstance, field: 'executionPrice')}"/>--}%
+          %{--</td>--}%
+        %{--</tr>--}%
 
         <tr class="prop">
           <td valign="top" class="name">

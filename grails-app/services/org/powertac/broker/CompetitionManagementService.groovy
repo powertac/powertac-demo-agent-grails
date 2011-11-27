@@ -71,7 +71,7 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
 
     // Generate broker URL and set it. Connection will be established automatically.
     setBrokerUrl(loginResponseCmd.serverAddress)
-	jmsManagementService.initialize(loginResponseCmd.serverQueueName)
+		jmsManagementService.initialize(loginResponseCmd.serverQueueName)
     jmsManagementService.registerBrokerMessageListener(loginResponseCmd.brokerQueueName, messageReceiver)
 
     def msgClassMap = applicationContext.getBeansOfType(MessageListenerWithAutoRegistration)
@@ -213,12 +213,14 @@ class CompetitionManagementService implements MessageListenerWithAutoRegistratio
    * Schedules a step of the simulation
    */
   void scheduleStep (long offset) {
+	  log.debug("scheduleStep(${offset}) - start")
     timeService.addAction(new Instant(timeService.currentTime.millis + offset),
 			new TimedAction() {
 				void perform(Instant instant) {
 					this.step()
 				}
 			});
+	  log.debug("scheduleStep(${offset}) - end")
   }
 
   /**

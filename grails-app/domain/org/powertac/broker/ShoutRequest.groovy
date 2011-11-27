@@ -1,15 +1,8 @@
 package org.powertac.broker
 
-import org.powertac.common.Competition
-import org.powertac.common.enumerations.ProductType
-import org.powertac.common.Shout.OrderType
-
 class ShoutRequest
 {
   boolean active
-
-  /** the product that should be bought or sold    */
-  ProductType product
 
   int beginTimeslot = 1
   int endTimeslot = Integer.MAX_VALUE
@@ -29,21 +22,25 @@ class ShoutRequest
   /** the last execution price    */
   BigDecimal executionPrice
 
+	enum OrderType {
+		BUY, SELL
+	}
+
   /** optional comment that can be used for example to further describe why a shout was deleted by system (e.g. during deactivaton of a timeslot)    */
   String comment
 
   static constraints = {
     comment(nullable: true)
+	  executionQuantity(nullable: true)
+	  executionPrice(nullable: true)
+	  limitPrice(nullable: true)
   }
 
   static namedQueries = {
     findAllActiveAtTimeslot { timeslot ->
-      def competition = Competition.list()[0]
-      if (competition) {
-        eq('active', true)
-        le('beginTimeslot', timeslot)
-        ge('endTimeslot', timeslot)
-      }
+			eq('active', true)
+			le('beginTimeslot', timeslot)
+			ge('endTimeslot', timeslot)
     }
   }
 }

@@ -5,7 +5,7 @@
   <meta name="layout" content="main"/>
   <g:set var="entityName"
          value="${message(code: 'shoutRequest.label', default: 'ShoutRequest')}"/>
-  <title><g:message code="default.edit.label" args="[entityName]"/></title>
+	<title><g:message code="default.edit.label" args="[entityName]"/></title>
 </head>
 
 <body>
@@ -81,8 +81,8 @@
           <td valign="top"
               class="value ${hasErrors(bean: shoutRequestInstance, field: 'buySellIndicator', 'errors')}">
             <g:select name="buySellIndicator"
-                      from="${org.powertac.common.enumerations.BuySellIndicator?.values()}"
-                      keys="${org.powertac.common.enumerations.BuySellIndicator?.values()*.name()}"
+                      from="${ShoutRequest.OrderType?.values()}"
+                      keys="${ShoutRequest.OrderType?.values()*.name()}"
                       value="${shoutRequestInstance?.buySellIndicator?.name()}"/>
           </td>
         </tr>
@@ -139,19 +139,19 @@
           </td>
         </tr>
 
-        <tr class="prop">
-          <td valign="top" class="name">
-            <label for="product"><g:message code="shoutRequest.product.label"
-                                            default="Product"/></label>
-          </td>
-          <td valign="top"
-              class="value ${hasErrors(bean: shoutRequestInstance, field: 'product', 'errors')}">
-            <g:select name="product"
-                      from="${org.powertac.common.enumerations.ProductType?.values()}"
-                      keys="${org.powertac.common.enumerations.ProductType?.values()*.name()}"
-                      value="${shoutRequestInstance?.product?.name()}"/>
-          </td>
-        </tr>
+        %{--<tr class="prop">--}%
+          %{--<td valign="top" class="name">--}%
+            %{--<label for="product"><g:message code="shoutRequest.product.label"--}%
+                                            %{--default="Product"/></label>--}%
+          %{--</td>--}%
+          %{--<td valign="top"--}%
+              %{--class="value ${hasErrors(bean: shoutRequestInstance, field: 'product', 'errors')}">--}%
+            %{--<g:select name="product"--}%
+                      %{--from="${org.powertac.common.enumerations.ProductType?.values()}"--}%
+                      %{--keys="${org.powertac.common.enumerations.ProductType?.values()*.name()}"--}%
+                      %{--value="${shoutRequestInstance?.product?.name()}"/>--}%
+          %{--</td>--}%
+        %{--</tr>--}%
 
         <tr class="prop">
           <td valign="top" class="name">
@@ -178,5 +178,6 @@
     </div>
   </g:form>
 </div>
+
 </body>
 </html>
