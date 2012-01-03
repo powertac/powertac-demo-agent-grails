@@ -45,7 +45,7 @@ grails.project.dependency.resolution = {
       excludes 'groovy', 'xml-apis'
     }
 
-    compile 'org.powertac:common:0.0.1-SNAPSHOT'
+    compile 'org.powertac:common:0.1.0'
 
     // this should have been inherited from powertac-common but somehow IntelliJ doesn't see this
     // compile( group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.3.1', export: true )
