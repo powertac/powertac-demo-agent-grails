@@ -57,7 +57,7 @@ class ConnectionService
 
 			// Connect to server
 			try {
-				def loginRequestCmd = new LoginRequestCmd(username: params.username, password: params.password) as XML
+				def loginRequestCmd = new LoginRequestCmd(params.username, params.password) as XML
 
 				// reestablish username
 				ConfigurationHolder.config.powertac.username = params.username
